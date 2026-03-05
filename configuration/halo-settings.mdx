@@ -1,0 +1,172 @@
+---
+title: "Halo Settings"
+description: "Configure Halo initialization, paths, ports, and core game settings"
+---
+
+## Overview
+
+The `[halo]` section configures how Halo is initialized, including file paths, network ports, and gameplay optimizations.
+
+## Path Configuration
+
+<ParamField path="path" type="string">
+  Change where profiles are stored. Can be absolute or relative. Can be overridden with the `-path` command-line argument.
+</ParamField>
+
+<ParamField path="download_map_path" type="string" default="<path>/chimera/maps">
+  Change where downloaded maps are stored. Can be absolute or relative.
+</ParamField>
+
+<ParamField path="map_path" type="string" default="maps">
+  Change where to load maps from. Can be absolute or relative.
+</ParamField>
+
+<ParamField path="exec" type="string">
+  Path to an 8-bit text file containing commands to execute on startup.
+</ParamField>
+
+### Example: Custom Paths
+
+```ini
+[halo]
+;path=C:\Users\whatever\you\want\to\put\here
+;download_map_path=C:\Users\whatever\you\want\to\put\here
+;map_path=maps
+;exec=C:\Users\path\to\init.txt
+```
+
+## Network Configuration
+
+<ParamField path="server_port" type="number" default="2302">
+  Server port for hosting games. Can be overridden with the `-port` command-line argument.
+</ParamField>
+
+<ParamField path="client_port" type="number" default="2303">
+  Client port for joining games. Can be overridden with the `-cport` command-line argument.
+</ParamField>
+
+<Tip>
+Set `client_port=0` to have the OS assign a client port automatically. This is **recommended** if you run multiple Halo instances on your PC.
+</Tip>
+
+### Example: Network Ports
+
+```ini
+[halo]
+;server_port=2302
+client_port=0
+```
+
+## Game Behavior
+
+<ParamField path="console" type="boolean" default="0">
+  Enable the developer console. Can be overridden with the `-console` command-line argument.
+</ParamField>
+
+<ParamField path="intro_videos" type="boolean" default="0">
+  Enable intro videos. Normally disabled by default as it makes starting the game take longer. On demo version, this also enables the outro video.
+</ParamField>
+
+<ParamField path="main_menu_music" type="boolean" default="1">
+  Enable menu music. Set to `0` to disable.
+</ParamField>
+
+<ParamField path="background_playback" type="boolean" default="0">
+  Enable video rendering when Halo is not in focus (e.g., tabbed out).
+</ParamField>
+
+<ParamField path="april_fools" type="boolean" default="1">
+  Enable April Fools features. Uncomment to disable.
+</ParamField>
+
+### Example: Game Behavior
+
+```ini
+[halo]
+console=1
+;intro_videos=1
+;main_menu_music=0
+background_playback=1
+;april_fools=0
+```
+
+## Optimal Defaults
+
+<ParamField path="optimal_defaults" type="boolean" default="0">
+  Use optimal defaults to make the game play more like a proper PC game. Enables the following:
+  - `chimera_af true`
+  - `chimera_aim_assist true`
+  - `chimera_block_loading_screen true`
+  - `chimera_block_mouse_acceleration true`
+  - `chimera_diagonals 0.75`
+  - `chimera_fov auto`
+  - `chimera_fov_cinematic auto`
+  - `chimera_fp_reverb true`
+  - `chimera_throttle_fps 300`
+  - `chimera_uncap_cinematic true`
+  - `chimera_model_detail true`
+  - `chimera_lock_fp_model_fov`
+</ParamField>
+
+<Info>
+Enabling `optimal_defaults` is recommended for the best PC gaming experience.
+</Info>
+
+### Example: Optimal Defaults
+
+```ini
+[halo]
+optimal_defaults=1
+```
+
+## Advanced Settings
+
+<ParamField path="multiple_instances" type="boolean" default="0">
+  Enable running multiple instances of Halo simultaneously.
+</ParamField>
+
+<Warning>
+Due to how Halo handles save files, enabling `multiple_instances` will cause the game to crash if you create checkpoints. Turn this off if you intend to play campaign!
+
+Each instance needs its own client port to join games. Setting `client_port=0` ensures this.
+</Warning>
+
+<ParamField path="hash" type="string" default="%">
+  Use a custom hash for identification. Can be a string up to 32 characters OR `%` for a random hash.
+</ParamField>
+
+### Example: Multiple Instances
+
+```ini
+[halo]
+;multiple_instances=1
+client_port=0
+hash=%
+```
+
+## Complete Example
+
+Here's a complete example configuration:
+
+```ini
+[halo]
+# Enable console
+console=1
+
+# Use optimal defaults for PC
+optimal_defaults=1
+
+# Allow background playback
+background_playback=1
+
+# Auto-assign client port
+client_port=0
+
+# Random hash
+hash=%
+
+# Custom paths (optional)
+;path=C:\Games\Halo\Profiles
+;download_map_path=C:\Games\Halo\Downloads
+;exec=C:\Games\Halo\autoexec.txt
+```

@@ -1,0 +1,592 @@
+---
+title: Lua Scripting
+description: Powerful Lua scripting API for extending Chimera functionality
+icon: code
+---
+
+Chimera includes a powerful Lua scripting system that allows you to extend and customize Halo PC behavior with scripts.
+
+## Overview
+
+The Lua scripting feature provides:
+
+- **Event-driven system** - Hook into game events
+- **Game state access** - Read and modify game data
+- **File I/O** - Persistent data storage
+- **Custom commands** - Create new console commands
+- **Map-specific scripts** - Different behavior per map
+- **Global scripts** - Always-loaded functionality
+
+<Info>
+Lua scripting is ported from Chimera -572 and provides a comprehensive API for game modification.
+</Info>
+
+## Script Locations
+
+Chimera loads scripts from specific directories:
+
+```
+<profiles>/chimera/lua/
+├── scripts/
+│   ├── global/        # Loaded on startup, always active
+│   └── map/           # Loaded per-map, unloaded on map change
+├── data/
+│   ├── global/        # Persistent data for global scripts
+│   └── map/           # Persistent data for map scripts
+└── modules/           # Shared Lua modules
+```
+
+### Script Types
+
+<Tabs>
+  <Tab title="Global Scripts">
+    **Location**: `chimera/lua/scripts/global/`
+    
+    **Behavior**:
+    - Loaded on game startup
+    - Remain loaded until game closes or manual reload
+    - Survive map changes
+    - Ideal for persistent features
+    
+    **Use cases**:
+    - Custom HUD overlays
+    - Chat enhancements
+    - Statistics tracking
+    - Quality of life features
+  </Tab>
+  
+  <Tab title="Map Scripts">
+    **Location**: `chimera/lua/scripts/map/`
+    
+    **Behavior**:
+    - Loaded when a map is loaded
+    - Unloaded when map changes
+    - Separate state per map
+    
+    **Use cases**:
+    - Map-specific functionality
+    - Custom game modes
+    - Map fixes or tweaks
+    - Easter eggs
+  </Tab>
+  
+  <Tab title="Embedded Scripts">
+    **Location**: Inside map files
+    
+    **Behavior**:
+    - Embedded directly in `.map` files
+    - Loaded automatically with the map
+    - Can be disabled for security
+    
+    **Configuration**:
+    ```ini
+    [memory]
+    load_embedded_lua=0  ; Default: disabled
+    ```
+    
+    <Warning>
+    Embedded Lua scripts are **unsupported on Halo Trial** and **disabled by default** for security.
+    </Warning>
+  </Tab>
+</Tabs>
+
+## Directory Structure Setup
+
+Chimera automatically creates the directory structure:
+
+```cpp
+// From scripting.cpp
+static void setup_lua_folder() {
+    auto lua_directory = get_chimera().get_path() / "lua";
+    
+    // Create directories
+    fs::create_directories(lua_directory / "scripts" / "global");
+    fs::create_directories(lua_directory / "scripts" / "map");
+    fs::create_directories(lua_directory / "data" / "global");
+    fs::create_directories(lua_directory / "data" / "map");
+    fs::create_directories(lua_directory / "modules");
+}
+```
+
+<Note>
+If you have scripts in the old directory structure, Chimera will automatically migrate them to the new `scripts/` subdirectories.
+</Note>
+
+## Basic Script Structure
+
+### Hello World Example
+
+```lua
+-- scripts/global/hello.lua
+
+function on_load()
+    console_out("Hello from Chimera Lua!")
+end
+
+function on_unload()
+    console_out("Goodbye!")
+end
+```
+
+### Event Callbacks
+
+Scripts can register callbacks for game events:
+
+```lua
+-- Called when script loads
+function on_load()
+    console_out("Script loaded")
+end
+
+-- Called when script unloads
+function on_unload()
+    console_out("Script unloaded")
+end
+
+-- Called every tick (30 times per second)
+function on_tick()
+    -- Game logic here
+end
+
+-- Called every frame
+function on_frame()
+    -- Rendering logic here
+end
+
+-- Called before camera update
+function on_camera()
+    -- Camera manipulation here
+end
+
+-- Called on map load
+function on_map_load()
+    local map_name = get_map_name()
+    console_out("Loaded map: " .. map_name)
+end
+
+-- Called when player spawns
+function on_spawn(player_index)
+    console_out("Player spawned: " .. player_index)
+end
+
+-- Called when player dies  
+function on_death(victim, killer)
+    console_out("Player died")
+end
+
+-- Called on chat message
+function on_chat(player, message, channel)
+    console_out(player .. ": " .. message)
+    -- Return true to block the message
+    return false
+end
+
+-- Called when object is created
+function on_object_create(object_id)
+    -- Handle object creation
+end
+```
+
+## API Categories
+
+The Lua API provides access to various game systems:
+
+### Game State
+
+```lua
+-- Get current map name
+local map = get_map_name()
+
+-- Get game type
+local gametype = get_gametype()
+
+-- Check if in multiplayer
+local is_mp = is_multiplayer()
+
+-- Get tick count
+local ticks = get_tick_count()
+```
+
+### Player Data
+
+```lua
+-- Get player count
+local count = get_player_count()
+
+-- Iterate players
+for i = 0, 15 do
+    local player = get_player(i)
+    if player then
+        local name = player.name
+        local team = player.team
+        local score = player.score
+    end
+end
+
+-- Get local player
+local local_player = get_local_player()
+```
+
+### Object Manipulation
+
+```lua
+-- Get object by ID
+local object = get_object(object_id)
+
+if object then
+    -- Read object data
+    local x, y, z = object.x, object.y, object.z
+    local health = object.health
+    
+    -- Modify object
+    object.x = x + 1.0
+    object.health = 1.0
+end
+
+-- Create object
+local tag_id = get_tag_id("weapons\\pistol\\pistol", "weap")
+if tag_id then
+    local obj_id = create_object(tag_id, x, y, z)
+end
+
+-- Delete object
+delete_object(object_id)
+```
+
+### Console Output
+
+```lua
+-- Print to console
+console_out("Message")
+
+-- Print colored text
+console_out("|cFFFF00Yellow text|r")
+
+-- Format output
+console_out(string.format("Value: %d", value))
+```
+
+### File I/O
+
+```lua
+-- Read file
+local content = read_file("data/global/config.txt")
+
+-- Write file
+write_file("data/global/config.txt", "data")
+
+-- Check if file exists
+if file_exists("data/global/config.txt") then
+    -- File exists
+end
+
+-- Delete file
+delete_file("data/global/config.txt")
+```
+
+**Location**: Scripts access files relative to `chimera/lua/`
+
+### Custom Commands
+
+```lua
+-- Register custom command
+register_command("my_command", "Does something cool", function(args)
+    console_out("Command called with: " .. table.concat(args, " "))
+end)
+
+-- Usage in console:
+-- my_command arg1 arg2 arg3
+```
+
+## Advanced Examples
+
+### Kill Counter
+
+```lua
+-- scripts/global/kill_counter.lua
+
+local kills = 0
+
+function on_load()
+    console_out("Kill counter loaded")
+    
+    -- Load saved kills
+    local saved = read_file("data/global/kills.txt")
+    if saved then
+        kills = tonumber(saved) or 0
+    end
+end
+
+function on_death(victim, killer)
+    local local_player = get_local_player()
+    
+    if killer == local_player then
+        kills = kills + 1
+        console_out("Total kills: " .. kills)
+        
+        -- Save kills
+        write_file("data/global/kills.txt", tostring(kills))
+    end
+end
+
+function on_unload()
+    console_out("Final kill count: " .. kills)
+end
+```
+
+### Map-Specific Welcome Message
+
+```lua
+-- scripts/map/welcome.lua
+
+function on_map_load()
+    local map = get_map_name()
+    local messages = {
+        bloodgulch = "Welcome to Blood Gulch!",
+        sidewinder = "Welcome to Sidewinder!",
+        dangercanyon = "Welcome to Danger Canyon!"
+    }
+    
+    local msg = messages[map] or "Welcome to " .. map
+    console_out(msg)
+end
+```
+
+### Auto-Reload Script
+
+```lua
+-- scripts/global/auto_reload.lua
+
+function on_tick()
+    local local_player = get_local_player()
+    if not local_player then return end
+    
+    -- Get player's weapon
+    local weapon = get_weapon(local_player)
+    if not weapon then return end
+    
+    -- Auto reload when ammo is low
+    if weapon.ammo < weapon.max_ammo * 0.2 then
+        execute_command("reload")
+    end
+end
+```
+
+## Script Management
+
+### Reloading Scripts
+
+Reload all scripts without restarting the game:
+
+```bash
+chimera_lua_reload  # Reload all Lua scripts
+```
+
+<Note>
+This is useful during script development - make changes and reload without restarting Halo.
+</Note>
+
+### Listing Scripts
+
+List all loaded scripts:
+
+```bash
+chimera_lua_list  # Show all active scripts
+```
+
+### Unloading Scripts
+
+```cpp
+// From scripting.cpp
+void destroy_lua_scripting() {
+    unload_scripts();
+}
+```
+
+Scripts are automatically unloaded:
+- When the game closes
+- When manually reloaded
+- Map scripts when changing maps
+
+## Security Considerations
+
+### Embedded Scripts
+
+<Warning>
+**Embedded Lua scripts are disabled by default** for security reasons.
+
+Only enable if you trust the map author:
+
+```ini
+[memory]
+load_embedded_lua=1  # Enable at your own risk
+```
+</Warning>
+
+**Why disabled?**:
+- Scripts can execute arbitrary code
+- Potential for malicious behavior
+- Can access file system
+- Can modify game state
+
+### Script Sandboxing
+
+Chimera Lua scripts have access to:
+- ✅ Game data (read/write)
+- ✅ File I/O (within `chimera/lua/` directory)
+- ✅ Console commands
+- ❌ System-level operations (blocked)
+- ❌ Network access (blocked)
+
+## Performance Considerations
+
+<Tip>
+**Best practices for performant scripts**:
+
+1. Avoid heavy operations in `on_tick()` - runs 30 times per second
+2. Cache frequently accessed data
+3. Use `on_frame()` only for rendering
+4. Minimize file I/O operations
+5. Unload scripts you're not using
+</Tip>
+
+### Callback Performance
+
+```lua
+-- BAD: Expensive operation every tick
+function on_tick()
+    for i = 1, 1000 do
+        -- Heavy computation
+    end
+end
+
+-- GOOD: Only when needed
+local counter = 0
+function on_tick()
+    counter = counter + 1
+    if counter >= 30 then  -- Once per second
+        counter = 0
+        -- Heavy computation
+    end
+end
+```
+
+## Technical Implementation
+
+**Location**: `src/chimera/lua/`
+
+```
+src/chimera/lua/
+├── scripting.cpp        # Core scripting system
+├── lua_script.cpp       # Script loading/unloading
+├── lua_callback.cpp     # Event callbacks
+├── lua_game.cpp         # Game state API
+├── lua_filesystem.cpp   # File I/O API
+├── lua_io.cpp           # Console I/O
+└── lua_variables.cpp    # Variable access
+```
+
+### Initialization
+
+```cpp
+void setup_lua_scripting() {
+    static bool already_setup = false;
+    if(already_setup) {
+        return;
+    }
+    
+    setup_lua_folder();
+    setup_callbacks();
+    load_global_scripts();
+    load_map_script();
+    
+    already_setup = true;
+}
+```
+
+## Related Features
+
+<CardGroup cols={2}>
+  <Card title="Commands" icon="terminal" href="/commands/lua">
+    Lua-related console commands
+  </Card>
+  
+  <Card title="File System" icon="folder" href="/configuration/paths">
+    Understanding file paths
+  </Card>
+  
+  <Card title="Custom Commands" icon="code" href="/commands/custom">
+    Creating custom commands
+  </Card>
+  
+  <Card title="Hotkeys" icon="keyboard" href="/configuration/hotkeys">
+    Bind Lua scripts to keys
+  </Card>
+</CardGroup>
+
+## Example Scripts Collection
+
+Common script patterns:
+
+<AccordionGroup>
+  <Accordion title="FPS Counter">
+    ```lua
+    local frame_count = 0
+    local last_time = 0
+    local fps = 0
+    
+    function on_frame()
+        frame_count = frame_count + 1
+        local current_time = get_tick_count()
+        
+        if current_time - last_time >= 30 then
+            fps = frame_count
+            frame_count = 0
+            last_time = current_time
+            console_out("FPS: " .. fps)
+        end
+    end
+    ```
+  </Accordion>
+  
+  <Accordion title="Position Logger">
+    ```lua
+    function on_tick()
+        local player = get_local_player()
+        if not player then return end
+        
+        local obj = get_object(player.object_id)
+        if obj then
+            local pos = string.format("X: %.2f, Y: %.2f, Z: %.2f",
+                                      obj.x, obj.y, obj.z)
+            console_out(pos)
+        end
+    end
+    ```
+  </Accordion>
+  
+  <Accordion title="Chat Logger">
+    ```lua
+    function on_chat(player, message, channel)
+        local timestamp = os.date("%Y-%m-%d %H:%M:%S")
+        local log = string.format("[%s] %s: %s\n",
+                                  timestamp, player, message)
+        
+        -- Append to log file
+        local current = read_file("data/global/chat.log") or ""
+        write_file("data/global/chat.log", current .. log)
+        
+        return false  -- Don't block the message
+    end
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Getting Help
+
+For Lua scripting support:
+
+- Check existing scripts in the community
+- Refer to the Chimera Lua API documentation
+- Ask on the Discord server
+- Review example scripts in the repository

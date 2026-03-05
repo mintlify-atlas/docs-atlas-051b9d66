@@ -1,0 +1,359 @@
+---
+title: Bug Fixes
+description: Comprehensive fixes for Halo PC bugs and issues
+icon: wrench
+---
+
+Chimera fixes numerous bugs present in the original Halo PC release, ranging from minor annoyances to game-breaking issues. All bug fixes are **always enabled** to provide the best experience.
+
+## Frame Rate Related Fixes
+
+Many bugs in Halo PC are caused by poor frame rate handling:
+
+### Camera Shake Fix
+
+Fixes camera shaking not working correctly at high frame rates.
+
+<Info>
+**Problem**: Camera shake effects (explosions, impacts) don't work properly above 30 FPS.
+
+**Solution**: Frame-rate independent camera shake calculations.
+</Info>
+
+### Checkpoint Fix
+
+Prevents checkpoints from timing out too quickly at high frame rates.
+
+```cpp
+// Checkpoints were timing out based on frame count, not actual time
+// Chimera fixes this to use real time
+```
+
+**Impact**: You won't lose checkpoint progress in campaign at high FPS.
+
+### Auto Center Fix
+
+Fixes vehicle auto-centering being frame rate dependent.
+
+<Warning>
+**Without this fix**: Vehicles are difficult to control at high frame rates due to aggressive auto-centering.
+
+**With this fix**: Natural vehicle handling regardless of FPS.
+</Warning>
+
+**Location**: `src/chimera/fix/auto_center.cpp`
+
+### Contrail Fix
+
+Fixes contrails (rocket trails, etc.) being bugged at high frame rates.
+
+### Motion Sensor Fix
+
+Corrects motion sensor fade animation at >30 FPS.
+
+### Name Fade Fix
+
+Player names now fade in/out correctly at high frame rates when looking at other players.
+
+### Scoreboard Fade Fix
+
+Scoreboard fades in/out properly at high frame rates.
+
+**Configuration**: Fade timing can be customized in `chimera.ini`:
+
+```ini
+[scoreboard]
+fade_time=0.5  ; 0 = instant, higher = slower
+```
+
+### Weapon Swap Ticks Fix
+
+Weapons are now picked up with correct timing when holding the action key.
+
+<Note>
+Previously, weapon pickup timing was frame-rate dependent, making it inconsistent at different FPS.
+</Note>
+
+## Gameplay Fixes
+
+### Descope Fix
+
+The most important multiplayer fix - proper descoping behavior.
+
+<AccordionGroup>
+  <Accordion title="The Problem">
+    In Halo PC multiplayer, descoping (automatic zoom-out when taking damage) is broken:
+    
+    - Client only descopes when taking damage on the **client instance**
+    - Does NOT descope when actually taking damage on the **server**
+    - Results in staying zoomed while being shot (unfair advantage)
+  </Accordion>
+  
+  <Accordion title="The Solution">
+    Chimera changes descoping to trigger when you lose health or shield:
+    
+    ```cpp
+    // Descope when actual damage is taken (server-side)
+    if(health_decreased || shield_decreased) {
+        descope_player();
+    }
+    ```
+    
+    This matches Xbox behavior and makes sniping fair.
+  </Accordion>
+</AccordionGroup>
+
+**Impact**: Essential for competitive multiplayer balance.
+
+### Timer Offset Fix
+
+Fixes a bug where equipment spawns at incorrect timing.
+
+```cpp
+// Halo PC bug: equipment spawns floor(8.1n) ticks
+// where n = netgame equipment index
+// Chimera corrects this calculation
+```
+
+**Location**: `src/chimera/fix/timer_offset.cpp`
+
+### Multi-team Vehicle Fix
+
+Prevents desync when using multi-team vehicles with `chimera_allow_all_passengers`.
+
+<Tip>
+Servers with this command enabled allow anyone to enter any vehicle, not just teammates.
+</Tip>
+
+## Visual Rendering Fixes
+
+### FOV Fix
+
+Fixes FOV getting narrower at higher vertical resolutions.
+
+<Warning>
+**Gearbox Bug**: Increasing vertical resolution narrows FOV, even on the same aspect ratio.
+
+**Chimera Fix**: FOV stays consistent between vertical resolutions.
+</Warning>
+
+**Location**: `src/chimera/fix/fov_fix.hpp`
+
+<Note>
+This does NOT fix low FOV at widescreen aspect ratios - use the `chimera_fov` command for that.
+</Note>
+
+### Model LOD Fix
+
+Prevents the infamous "4K headless chief" glitch.
+
+**The Problem**:
+- Game uses vertical resolution to determine model detail level
+- At 4K resolution, it shows the highest LOD inappropriately
+- Causes missing heads in cutscenes (The Pillar of Autumn level)
+
+**The Solution**:
+```cpp
+// Scale by 480p instead of actual resolution
+// Prevents inappropriate LOD selection
+```
+
+### Sun Fix (Lens Flare)
+
+Lens flares now scale properly with resolution.
+
+- **Before**: Set number of pixels regardless of resolution
+- **After**: Scales by 768p for consistency
+
+### Zoom Blur Fix
+
+Improves zoom blur quality and scaling.
+
+**Improvements**:
+- Blur radius scales by 480p (not hardcoded pixels)
+- Increased effect resolution
+- Better quality at high resolutions
+
+**Disable it**: Use `chimera_block_zoom_blur` if you prefer no blur.
+
+### Z-fighting Fix
+
+Reduces Z-fighting (flickering surfaces) at far distances.
+
+<Info>
+**Problem**: Floating point precision loss causes Z-fighting as you get further from map center.
+
+**Solution**: Chimera reduces decal Z-fighting with level geometry.
+</Info>
+
+### Multitexture Overlay Fix
+
+Fixes blending issues with multitexture overlays.
+
+**Example**: Sniper rifle scope angle ticks now blend correctly.
+
+**Location**: `src/chimera/fix/multitexture_overlay_fix.hpp`
+
+## Shader and Graphics Fixes
+
+### Shader Fixes
+
+Restores Xbox-accurate rendering by fixing Gearbox shader regressions.
+
+**Fixed shader types**:
+- `shader_transparent_generic` - Missing in Halo PC, restored by Chimera
+- Environmental bump mapping
+- Specular lighting
+- Fog rendering
+
+**Location**: `src/chimera/rasterizer/shader_transparent_generic.cpp`
+
+### Fog Fix
+
+Fog in maps like Assault on the Control Room now works as intended.
+
+**Impact**: Proper atmospheric effects in campaign levels.
+
+### Model Detail Fix
+
+The "detail after reflection" flag in model shaders now works correctly.
+
+### HUD Numbers Fix
+
+HUD numbers no longer drawn oversized if modified to be higher resolution.
+
+### NVIDIA Camo Fix (Trial Only)
+
+Fixes NVIDIA GPUs using alpha-blended camo instead of liquid shader in Halo Trial.
+
+<Note>
+This fix only applies to Halo Trial, as retail/CE don't have this bug.
+</Note>
+
+## Loading and Performance Fixes
+
+### Fast Loading
+
+Significantly improves startup time for large map folders.
+
+<AccordionGroup>
+  <Accordion title="The Problem">
+    Halo Custom Edition CRC32s **every map** on startup:
+    
+    - Small maps folder: Minor delay
+    - Large maps folder: **Minutes** of loading time
+  </Accordion>
+  
+  <Accordion title="The Solution">
+    Chimera CRC32s maps when you **load them**, not at startup:
+    
+    ```cpp
+    // CRC32 on map load, not game startup
+    // Maintains server validation
+    // Eliminates startup delay
+    ```
+    
+    This is a **true fix** - not a cache that bypasses validation.
+  </Accordion>
+</AccordionGroup>
+
+**Location**: `src/chimera/map_loading/fast_load.cpp`
+
+### Fast Server Listing
+
+Speeds up querying the master server for game list.
+
+### 128 MiB Map Leak Fix
+
+Prevents file descriptor leaks with large maps.
+
+**The Bug**:
+```cpp
+// If map > 128 MiB:
+// - Opens file multiple times
+// - Only closes it once
+// - File descriptors leak
+// - Eventually runs out of file handles
+```
+
+**The Fix**: Removes the problematic file size check.
+
+**Location**: `src/chimera/fix/leak_descriptors.cpp`
+
+## Menu and UI Fixes
+
+### Extended Description Fix
+
+Fixes the "About" button in profile settings not displaying the correct bitmap.
+
+### Reduced DRM
+
+Removes CD key check for local hosting.
+
+<Info>
+**Original behavior**: Can't join your own locally hosted server with same CD key.
+
+**Chimera behavior**: Can host and join yourself for testing.
+</Info>
+
+<Warning>
+This does NOT crack the game - you still need a valid Halo installation and 1.10 update.
+</Warning>
+
+## Removed Annoyances
+
+### Removed Update Check
+
+Disables the outdated update check when clicking "INTERNET" in menus.
+
+### Removed Watson
+
+Removes the Watson crash reporter that tries to contact a dead server.
+
+**Why**: Watson hasn't worked in years and just adds delay after crashes.
+
+## Related Commands
+
+Many additional fixes can be toggled via commands:
+
+<CardGroup cols={2}>
+  <Card title="Block All Bullshit" icon="ban" href="/commands/block-all-bullshit">
+    Disable annoying UI elements at once
+  </Card>
+  
+  <Card title="Visual Commands" icon="eye" href="/commands/visual">
+    Toggle various visual elements
+  </Card>
+  
+  <Card title="Widescreen Fix" icon="tv" href="/commands/widescreen-fix">
+    Fix HUD scaling for widescreen
+  </Card>
+  
+  <Card title="Devmode" icon="code" href="/commands/devmode">
+    Enable devmode without restrictions
+  </Card>
+</CardGroup>
+
+## Technical Reference
+
+Bug fix implementations are located in:
+
+```
+src/chimera/fix/
+├── auto_center.cpp
+├── camera_shake_fix.cpp
+├── checkpoint_fix.cpp
+├── contrail_fix.cpp
+├── descope_fix.cpp
+├── fov_fix.cpp
+├── interpolate/
+├── leak_descriptors.cpp
+├── model_detail.cpp
+├── motion_sensor_fix.cpp
+├── multitexture_overlay_fix.cpp
+├── name_fade.cpp
+├── scoreboard_fade_fix.cpp
+├── timer_offset.cpp
+├── weapon_swap_ticks.cpp
+└── z_fighting.cpp
+```

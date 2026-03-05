@@ -1,0 +1,176 @@
+---
+title: 'Network Commands'
+description: 'Commands for server bookmarks, connection management, and network features'
+icon: 'network-wired'
+---
+
+Network commands help you manage server connections, bookmarks, and connection history.
+
+## Server Bookmarks
+
+Chimera provides a comprehensive bookmark system for saving and quickly connecting to your favorite servers.
+
+### chimera_bookmark_add
+
+Add a server to your bookmarks list.
+
+<ParamField path="address" type="string" optional>
+  Server address in `ip:port` format. If omitted, adds the last server you joined.
+</ParamField>
+
+<ParamField path="password" type="string" optional>
+  Server password (if required)
+</ParamField>
+
+```bash
+chimera_bookmark_add                                    # Bookmark last server joined
+chimera_bookmark_add 192.168.1.100:2302                # Bookmark specific server
+chimera_bookmark_add example.com:2302                   # Use domain name
+chimera_bookmark_add 192.168.1.100:2302 mypassword     # With password
+```
+
+<Tip>
+You can use domain names instead of IP addresses for easier bookmarking.
+</Tip>
+
+### chimera_bookmark_delete
+
+Remove a server from your bookmarks list.
+
+<ParamField path="identifier" type="string | number" optional>
+  Server address (`ip:port`) or bookmark index. If omitted, removes the last server you joined.
+</ParamField>
+
+```bash
+chimera_bookmark_delete                    # Delete last server joined
+chimera_bookmark_delete 192.168.1.100:2302 # Delete by address
+chimera_bookmark_delete 3                  # Delete by index
+```
+
+### chimera_bookmark_list
+
+List all bookmarked servers and query their current status.
+
+```bash
+chimera_bookmark_list
+```
+
+<Info>
+This command will query each bookmarked server to show current player counts, map, and gametype.
+</Info>
+
+### chimera_bookmark_connect
+
+Connect to a bookmarked server by its index.
+
+<ParamField path="index" type="number" required>
+  The bookmark index from `chimera_bookmark_list`
+</ParamField>
+
+```bash
+chimera_bookmark_connect 1  # Connect to first bookmark
+chimera_bookmark_connect 5  # Connect to fifth bookmark
+```
+
+## Connection History
+
+Chimera automatically tracks servers you've recently connected to.
+
+### chimera_history_list
+
+List all recently connected servers and query their current status.
+
+```bash
+chimera_history_list
+```
+
+<Info>
+Shows recent servers in order, with the most recently joined first.
+</Info>
+
+### chimera_history_connect
+
+Reconnect to a server from your connection history.
+
+<ParamField path="index" type="number" required>
+  The history index from `chimera_history_list`
+</ParamField>
+
+```bash
+chimera_history_connect 1  # Reconnect to last server
+chimera_history_connect 3  # Connect to 3rd recent server
+```
+
+## Connection Utilities
+
+### chimera_spam_to_join
+
+Automatically retry connecting to a server when it's full.
+
+<ParamField path="enabled" type="boolean">
+  true to enable auto-retry, false to disable
+</ParamField>
+
+```bash
+chimera_spam_to_join true   # Keep trying until you get in
+chimera_spam_to_join false  # Stop retrying
+```
+
+<Warning>
+Be respectful of servers and don't abuse this feature. Some servers may kick players who spam connection attempts.
+</Warning>
+
+## Privacy
+
+### chimera_block_server_ip
+
+Hide server IP addresses from the score screen. Essential for streamers.
+
+<ParamField path="enabled" type="boolean">
+  true to hide server IPs, false to show them
+</ParamField>
+
+```bash
+chimera_block_server_ip true
+```
+
+<Info>
+This prevents viewers from seeing what server you're playing on, reducing unwanted joins or potential harassment.
+</Info>
+
+## Map Downloading
+
+Chimera automatically downloads missing maps from the HAC2 Map repository when joining servers. This is a passive feature that requires no commands.
+
+### Configuration
+
+Map downloading behavior can be customized in `chimera.ini`:
+
+- `download_map_path`: Where downloaded maps are stored (default: `chimera/maps` in your Halo profiles folder)
+- `download_template`: URL template for map downloads (default: HAC2 repository)
+- `download_retail_maps`: Allow downloading retail Halo PC maps (UNSAFE - not recommended)
+
+<Warning>
+Enabling `download_retail_maps` is unsafe and may result in modified retail maps that could crash your game or compromise your system.
+</Warning>
+
+## Tips for Server Management
+
+<AccordionGroup>
+  <Accordion title="Organize Your Bookmarks">
+    Use descriptive names when possible by adding notes in your bookmark list. While Chimera doesn't support custom names directly, you can maintain a separate text file mapping indices to server names.
+  </Accordion>
+  
+  <Accordion title="Fast Server Switching">
+    Combine bookmarks with hotkeys in `chimera.ini` to instantly connect to favorite servers:
+    ```ini
+    [hotkey.server1]
+    key = F9
+    command = chimera_bookmark_connect 1
+    ```
+  </Accordion>
+  
+  <Accordion title="Clean Your History">
+    Connection history is maintained automatically. If you want to clear it, delete or edit the relevant section in Chimera's preferences file.
+  </Accordion>
+</AccordionGroup>

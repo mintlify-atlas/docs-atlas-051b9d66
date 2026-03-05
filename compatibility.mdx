@@ -1,0 +1,360 @@
+---
+title: Compatibility
+description: What works and what doesn't with Chimera
+---
+
+This page details Chimera's compatibility with other mods, platforms, and game versions.
+
+## Platform Compatibility
+
+<AccordionGroup>
+  <Accordion title="Windows">
+    ### Supported Versions
+
+    - **Windows 7 or newer:** Full support
+    - **Windows XP and newer:** Supported with dedicated Windows XP release
+
+    <Note>
+      To build Chimera with Windows XP support, pass the argument `-DCHIMERA_WINXP=ON` when running CMake.
+    </Note>
+
+    ### Installation Location Notes
+
+    Most users install Halo in the default "Program Files" folder. This can cause issues with write permissions:
+
+    - Auto-updaters (if they existed) would fail without admin rights
+    - Some features may require running as administrator
+    - Consider installing Halo outside of Program Files for better compatibility
+
+    <Warning>
+      Running Halo as administrator is not recommended for security reasons, especially for an Internet-connected game from 2003.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Linux (Wine)">
+    ### Minimum Requirements
+
+    - **Wine 4.0 or newer** is required
+    - Older Wine versions may fail due to API differences
+
+    ### Known Issues
+
+    Some mods with obfuscated DLLs may crash on Wine:
+    - Wine has issues loading obfuscated DLLs
+    - These DLLs require unpacking, which isn't possible without reverting the DLL manually
+    - **Note:** Chimera itself is not obfuscated and works fine on Wine
+
+    ### Building on Linux
+
+    Chimera can be cross-compiled from a Linux host:
+
+    ```bash
+    # Create a build directory
+    mkdir build
+    cd build
+
+    # Run MinGW cmake (command varies by distro)
+    i686-w64-mingw32-cmake -S <path-to-source> -B . -DCMAKE_BUILD_TYPE=Release
+
+    # Build
+    cmake --build .
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Game Version Compatibility
+
+<AccordionGroup>
+  <Accordion title="Halo: Combat Evolved (PC/Retail)">
+    **Status:** ✅ Fully Supported
+
+    ### Requirements
+    - Game must be updated to version 1.10 (unless using trial)
+    - Back up original strings.dll before installing
+
+    ### Custom Edition Maps on Retail
+
+    Chimera can enable Halo Custom Edition map support when playing base Halo PC.
+
+    **To enable:**
+    1. Put these files in your maps folder:
+       - `custom_bitmaps.map` (Halo Custom Edition bitmaps.map)
+       - `custom_loc.map` (Halo Custom Edition loc.map)
+       - `custom_sounds.map` (Halo Custom Edition sounds.map)
+
+    2. Obtain these files from:
+       - Halo Custom Edition installer, or
+       - Extract from installer using [7-Zip](https://www.7-zip.org/) (Windows) or [p7zip](https://wiki.archlinux.org/index.php/P7zip) (Linux)
+
+    3. Rename them with `custom_` prefixes
+
+    <Warning>
+      Do NOT overwrite your original bitmaps.map or sounds.map files. You need these to load Halo PC maps. Chimera will not enable this feature if any of the custom_* files are missing.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Halo Custom Edition">
+    **Status:** ✅ Fully Supported
+
+    ### Special Features for Custom Edition
+
+    - **Campaign re-enabled:** If all campaign maps are present, Chimera restores the campaign menu option
+    - **Fast loading:** CRC32 checking is done when loading maps, not at startup
+    - **Map downloading:** Auto-download from HAC2 Map repo
+
+    ### Performance Improvements
+
+    Custom Edition benefits significantly from Chimera:
+    - No more slow startup with large map folders
+    - Better handling of maps over 128 MiB
+    - Improved server listing speeds
+  </Accordion>
+
+  <Accordion title="Halo Trial">
+    **Status:** ✅ Supported
+
+    ### Trial-Specific Fixes
+
+    - **NVIDIA camo fix:** Fixes alpha-blended camo on NVIDIA graphics cards (uses proper liquid camo shader)
+
+    <Note>
+      No need to update to 1.10 if using trial version.
+    </Note>
+  </Accordion>
+</AccordionGroup>
+
+## Mod Compatibility
+
+<AccordionGroup>
+  <Accordion title="❌ HAC2 (Not Compatible)">
+    **Status:** ❌ Not Compatible
+
+    ### Why HAC2 Doesn't Work with Chimera
+
+    Chimera does **not** support HAC2 because:
+    - Both modify the game in similar ways
+    - They conflict with one another
+    - Supporting HAC2 would require significant extra development time
+
+    <Warning>
+      Do not attempt to use HAC2 and Chimera together. They will conflict and cause crashes.
+    </Warning>
+
+    ### Additional HAC2 Issues
+
+    While not related to Chimera compatibility, be aware:
+    - HAC2's auto-updater has historically prevented users from playing when servers go down
+    - The public [HAC2 repository](https://github.com/Chaosvex/HAC2) is not maintained and years out of date
+    - Recent HAC2 builds are closed source
+  </Accordion>
+
+  <Accordion title="❌ Open Sauce (Not Compatible)">
+    **Status:** ❌ Not Compatible
+
+    ### Why Open Sauce Doesn't Work with Chimera
+
+    Similar to HAC2:
+    - Modifies the game in ways that conflict with Chimera
+    - Both mods cannot coexist
+    - No plans to add compatibility
+
+    <Warning>
+      Choose either Chimera or Open Sauce, not both.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="✅ Binary DLL Mods (Compatible)">
+    **Status:** ✅ Compatible (with exceptions)
+
+    ### How to Install DLL Mods
+
+    1. Create a folder called `mods` in your Halo directory
+    2. Copy DLL files into the mods folder
+    3. Chimera will automatically load them
+
+    ### Exceptions
+
+    The following mods are **not** compatible:
+    - HAC2 (conflicts with Chimera)
+    - Open Sauce (conflicts with Chimera)
+    - Any mod that hooks similar functions to Chimera
+
+    <Info>
+      Most simple DLL mods that add features without modifying core game behavior should work fine.
+    </Info>
+  </Accordion>
+
+  <Accordion title="✅ Lua Scripts (Compatible)">
+    **Status:** ✅ Fully Supported
+
+    ### Lua Scripting in Chimera
+
+    Chimera includes Lua scripting support ported from Chimera -572.
+
+    **Script Locations:**
+    - **Global folder:** Scripts loaded on startup, remain permanently loaded unless reloaded
+    - **Map folder:** Scripts loaded when a map loads, unloaded when map unloads
+    - **Embedded in maps:** Scripts can be contained inside map files (requires `load_embedded_lua` setting)
+
+    **Configuration:**
+    ```ini
+    [memory]
+    load_embedded_lua=1  ; Enable loading Lua from map files
+    ```
+
+    **Commands:**
+    - Reload scripts with the `scripts reload` command
+  </Accordion>
+
+  <Accordion title="✅ dgVoodoo2 (Compatible)">
+    **Status:** ✅ Recommended
+
+    ### Using dgVoodoo2 with Chimera
+
+    [dgVoodoo2](http://dege.freeweb.hu/dgVoodoo2/) is a graphics wrapper that provides:
+    - Proper gamma/brightness control (recommended replacement for Halo's disabled gamma setting)
+    - Enhanced graphics options
+    - Better compatibility with modern systems
+
+    **Why Use dgVoodoo2:**
+    - Chimera disables Halo's built-in gamma setting for safety reasons
+    - dgVoodoo2 provides a safer alternative that doesn't modify your registry
+    - Additional graphics enhancements available
+  </Accordion>
+
+  <Accordion title="✅ DSOAL (Compatible)">
+    **Status:** ✅ Compatible
+
+    ### Using DSOAL with Chimera
+
+    [DSOAL](https://github.com/kcat/dsoal) enables hardware-accelerated audio and EAX on modern systems.
+
+    **Benefits:**
+    - Hardware acceleration for audio
+    - Environmental audio (EAX) support
+    - Better sound quality on modern systems
+
+    **Chimera's Default Settings Include:**
+    - Hardware Acceleration: YES (requires DSOAL)
+    - Environmental Audio: EAX (requires DSOAL)
+
+    <Info>
+      Chimera sets these as defaults for modern PCs, but you'll need DSOAL installed for them to work.
+    </Info>
+  </Accordion>
+</AccordionGroup>
+
+## Map Compatibility
+
+<AccordionGroup>
+  <Accordion title="Standard Maps">
+    **Status:** ✅ Fully Compatible
+
+    All standard Halo PC and Halo Custom Edition maps work with Chimera:
+    - Campaign maps
+    - Multiplayer maps
+    - Custom Edition maps (on retail with proper setup)
+  </Accordion>
+
+  <Accordion title="Large Maps (>128 MiB)">
+    **Status:** ✅ Fixed by Chimera
+
+    ### The Problem
+    Vanilla Halo has a bug where maps exceeding 128 MiB:
+    - Are opened multiple times
+    - Only closed once
+    - Cause memory leaks
+    - Eventually run out of file descriptors
+
+    ### Chimera's Fix
+    Chimera removes the file size check, properly handling large maps:
+    - No memory leaks
+    - No file descriptor issues
+    - Safe to use maps of any size
+
+    <Info>
+      You can safely use large maps with Chimera without any special configuration.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Compressed Maps">
+    **Status:** ✅ Fully Supported
+
+    ### Chimera Compression
+
+    Chimera supports maps compressed with the chimera-compress tool:
+    - Uses blazingly fast zstd compression algorithm
+    - Drastically reduces map file sizes
+    - Transparent to the user
+
+    **Decompression:**
+    - If [maps in RAM](#memory-settings) is enabled: Decompressed directly into RAM
+    - Otherwise: Temp files used (placed in Chimera's folder)
+
+    <Note>
+      Compressed maps provide the best experience when combined with the memory settings feature.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Modified Maps">
+    **Status:** ⚠️ Requires CRC32 Forging
+
+    ### CRC32 Checking
+
+    When joining Custom Edition servers, Chimera performs CRC32 checks:
+    - Ensures map matches server's version
+    - Prevents crashes from incompatible maps
+    - ~99.999999976% certainty of match
+
+    ### Using Modified Maps
+
+    If you want to use a modified map on a Custom Edition server:
+    1. **Recommended:** Get the original, unmodified map
+    2. **Advanced:** Forge the CRC32 to match the server's map
+
+    <Warning>
+      Using modified maps with forged CRC32s can cause crashes if the modifications aren't compatible. This check exists for your protection.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+## Controller Compatibility
+
+<AccordionGroup>
+  <Accordion title="Supported Controllers">
+    **Status:** ✅ Configurable
+
+    ### Controller Support
+
+    Chimera includes controller configuration support with [premade configs](https://github.com/SnowyMouse/chimera/tree/master/controller_config) for:
+
+    **Windows:**
+    - Xbox One
+    - Xbox 360
+    - Switch Pro
+    - DualShock 4
+    - DualShock 4 (DS4Windows)
+
+    **Linux:**
+    - Xbox One
+    - Xbox 360
+    - Xbox Original
+
+    ### Configuration
+
+    See `chimera.ini` for controller settings including:
+    - Deadzone settings (`chimera_deadzones`)
+    - Diagonal movement (`chimera_diagonals`)
+    - Aim assist (fixed for analog sticks)
+
+    <Info>
+      Chimera fixes Halo's broken aim assist, but it only works for analog sticks, not mouse.
+    </Info>
+  </Accordion>
+</AccordionGroup>
+
+## Need More Info?
+
+- [FAQ](/faq) - Frequently asked questions
+- [Troubleshooting](/troubleshooting) - Common issues and solutions
+- [GitHub Repository](https://github.com/SnowyMouse/chimera) - Source code and issue tracker

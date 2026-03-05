@@ -1,0 +1,236 @@
+---
+title: 'Gameplay Commands'
+description: 'Commands that modify gameplay mechanics and player behavior'
+icon: 'play'
+---
+
+Gameplay commands provide tools for modifying game mechanics, enabling debug features, and controlling player actions.
+
+## Developer Mode
+
+### chimera_devmode
+
+Enable devmode commands without blocking multiplayer access or requiring command line arguments.
+
+<ParamField path="enabled" type="boolean">
+  true to enable devmode, false to disable
+</ParamField>
+
+```bash
+chimera_devmode true
+```
+
+<Info>
+Unlike Halo's built-in devmode, Chimera's implementation doesn't prevent you from joining multiplayer servers.
+</Info>
+
+## Teleportation
+
+### chimera_teleport
+
+Teleport yourself or another player to specific coordinates or to another player's location.
+
+<ParamField path="target" type="number" optional>
+  Player index to teleport (optional, defaults to yourself)
+</ParamField>
+
+<ParamField path="destination" type="number | coordinates">
+  Either a player index to teleport to, or X Y Z coordinates
+</ParamField>
+
+```bash
+chimera_teleport 5                    # Teleport yourself to player 5
+chimera_teleport 100 50 25            # Teleport to coordinates X=100, Y=50, Z=25
+chimera_teleport 2 100 50 25          # Teleport player 2 to coordinates
+chimera_teleport 3 5                  # Teleport player 3 to player 5
+```
+
+<Warning>
+Teleporting other players only works when you're hosting a server.
+</Warning>
+
+## Player Management
+
+### chimera_set_name
+
+Change your in-game name.
+
+<ParamField path="name" type="string">
+  Your desired player name
+</ParamField>
+
+```bash
+chimera_set_name "NewPlayerName"
+chimera_set_name Guest123
+```
+
+### chimera_set_color
+
+Set your player color in free-for-all gametypes.
+
+<ParamField path="color" type="string">
+  Color name (white, black, red, blue, gray, yellow, green, pink, purple, cyan, cobalt, orange, teal, sage, brown, tan, maroon, salmon)
+</ParamField>
+
+```bash
+chimera_set_color red
+chimera_set_color cyan
+```
+
+## Chat
+
+### chimera_send_chat_message
+
+Send a chat message to a specific channel.
+
+<ParamField path="channel" type="number">
+  Chat channel: 0 = all, 1 = team, 2 = vehicle. Other channels may be used by mods.
+</ParamField>
+
+<ParamField path="message" type="string">
+  The message to send
+</ParamField>
+
+```bash
+chimera_send_chat_message 0 "Hello everyone!"
+chimera_send_chat_message 1 "Team strategy here"
+chimera_send_chat_message 2 "Get in!"
+```
+
+### chimera_chat_color_help
+
+Display available fancy chat colors you can use in messages.
+
+```bash
+chimera_chat_color_help
+```
+
+### chimera_chat_block_ips
+
+Hide IP addresses in custom chat. Useful for streamers to prevent IP exposure.
+
+<ParamField path="enabled" type="boolean">
+  true to hide IPs, false to show them
+</ParamField>
+
+```bash
+chimera_chat_block_ips true
+```
+
+<Note>
+Requires Chimera's custom chat to be enabled.
+</Note>
+
+### chimera_chat_block_server_messages
+
+Block all messages from the server except when using `rcon` in console.
+
+<ParamField path="enabled" type="boolean">
+  true to block server messages, false to show them
+</ParamField>
+
+```bash
+chimera_chat_block_server_messages true
+```
+
+## Server Hosting
+
+### chimera_allow_all_passengers
+
+Disable teammate restrictions for vehicles, allowing anyone to enter any vehicle.
+
+<ParamField path="enabled" type="boolean">
+  true to allow all passengers, false for normal restrictions
+</ParamField>
+
+```bash
+chimera_allow_all_passengers true
+```
+
+<Warning>
+Only applies when hosting a game. Clients need Chimera's multi-team vehicle fix to avoid desyncing.
+</Warning>
+
+### chimera_tps
+
+Set the game's tick rate (ticks per second). Only works in client-hosted games.
+
+<ParamField path="tps" type="number">
+  Ticks per second (default is 30)
+</ParamField>
+
+```bash
+chimera_tps 60     # 60 tick rate (experimental)
+chimera_tps 30     # Default tick rate
+```
+
+<Warning>
+Changing tick rate is experimental and may cause gameplay issues.
+</Warning>
+
+### chimera_delete_empty_weapons
+
+Automatically delete empty weapons when hosting, similar to Xbox behavior.
+
+<ParamField path="enabled" type="boolean">
+  true to delete empty weapons, false to leave them
+</ParamField>
+
+```bash
+chimera_delete_empty_weapons true
+```
+
+## Weapon Management
+
+### chimera_block_extra_weapon
+
+Block your currently held weapon if you have more than two weapons. Lasts until the next game.
+
+```bash
+chimera_block_extra_weapon
+```
+
+<Note>
+Use `chimera_unblock_all_extra_weapons` to unblock all weapons.
+</Note>
+
+### chimera_unblock_all_extra_weapons
+
+Unblock all weapons previously blocked with `chimera_block_extra_weapon`.
+
+```bash
+chimera_unblock_all_extra_weapons
+```
+
+## Audio
+
+### chimera_fp_reverb
+
+Control whether first-person sounds have reverberations when EAX is enabled.
+
+<ParamField path="enabled" type="boolean">
+  true to enable reverb, false to disable
+</ParamField>
+
+```bash
+chimera_fp_reverb false  # Disable reverb for clearer sound
+```
+
+## Localization
+
+### chimera_language
+
+Set Chimera's interface language.
+
+<ParamField path="language" type="'en' | 'es'">
+  Language code: en = English, es = Spanish
+</ParamField>
+
+```bash
+chimera_language en  # English
+chimera_language es  # Spanish
+```
+
+<Info>
+Chimera is localized for English and Spanish thanks to community contributions.
+</Info>

@@ -1,0 +1,221 @@
+---
+title: "Video Settings"
+description: "Configure resolution, refresh rate, vsync, and graphics options"
+---
+
+## Overview
+
+The `[video_mode]` section configures video mode settings including resolution, refresh rate, vsync, windowed mode, and anisotropic filtering.
+
+## Enable Video Mode Settings
+
+<ParamField path="enabled" type="boolean" default="0">
+  Enable the `[video_mode]` settings. Must be set to `1` for other settings in this section to take effect.
+</ParamField>
+
+```ini
+[video_mode]
+enabled=1
+```
+
+## Resolution
+
+<ParamField path="width" type="string/number" default="auto">
+  Resolution width in pixels. Use `auto` to use your primary monitor's current width.
+</ParamField>
+
+<ParamField path="height" type="string/number" default="auto">
+  Resolution height in pixels. Use `auto` to use your primary monitor's current height.
+</ParamField>
+
+<Warning>
+Halo may fail to start properly if the width or height is not supported by your desktop.
+</Warning>
+
+### Example: Custom Resolution
+
+```ini
+[video_mode]
+enabled=1
+width=1920
+height=1080
+```
+
+### Example: Auto Resolution
+
+```ini
+[video_mode]
+enabled=1
+width=auto
+height=auto
+```
+
+## Refresh Rate
+
+<ParamField path="refresh_rate" type="number" default="0">
+  Refresh rate in Hz. Use `0` to use your system's current refresh rate.
+</ParamField>
+
+<Note>
+While the Halo menu does not list refresh rates above 120 Hz, this setting can be used to bypass this limitation.
+</Note>
+
+### Example: High Refresh Rate
+
+```ini
+[video_mode]
+enabled=1
+width=2560
+height=1440
+refresh_rate=144
+```
+
+## VSync
+
+<ParamField path="vsync" type="boolean" default="0">
+  Enable double buffer VSync to prevent screen tearing. Adds several frames of input lag (often >100ms at 60 Hz).
+</ParamField>
+
+<Tip>
+If you have a monitor with variable refresh rate (FreeSync, G-Sync, etc.):
+1. Enable vsync: `vsync=1`
+2. Use `chimera_throttle_fps` to lock your frame rate to refresh rate minus 3
+   - For 144 Hz display: lock to 141 FPS
+3. Play in full screen or borderless fullscreen with an API wrapper (dxvk or dgVoodoo2)
+</Tip>
+
+### Example: VSync for VRR Displays
+
+```ini
+[video_mode]
+enabled=1
+width=auto
+height=auto
+refresh_rate=0
+vsync=1
+borderless=1
+```
+
+Then use the console command:
+```
+chimera_throttle_fps 141
+```
+
+## Window Mode
+
+<ParamField path="windowed" type="boolean" default="0">
+  Play in windowed mode instead of fullscreen.
+</ParamField>
+
+<Warning>
+On newer versions of Windows, windowed mode incurs input lag due to the Desktop Window Manager. On Linux, disable compositing if you choose to play in a window.
+</Warning>
+
+<ParamField path="borderless" type="boolean" default="0">
+  Play in borderless fullscreen mode. Requires `windowed=1` to work.
+</ParamField>
+
+<Info>
+Borderless fullscreen allows you to play without changing video modes, but may have higher input lag than exclusive fullscreen.
+
+API wrappers like **dxvk** or **dgVoodoo2** can enable flip model/fullscreen optimizations on Windows 10/11, eliminating additional input lag in borderless fullscreen.
+</Info>
+
+<Note>
+Resolutions lower than your current resolution will be stretched in borderless mode.
+</Note>
+
+### Example: Borderless Fullscreen
+
+```ini
+[video_mode]
+enabled=1
+width=1920
+height=1080
+refresh_rate=0
+windowed=1
+borderless=1
+```
+
+### Example: Windowed Mode
+
+```ini
+[video_mode]
+enabled=1
+width=1280
+height=720
+windowed=1
+borderless=0
+```
+
+## Anisotropic Filtering
+
+<ParamField path="af_level" type="number" default="16">
+  Anisotropic filtering level. Chimera defaults to 16. The base game's level is 8. Values above 16 have no effect.
+</ParamField>
+
+```ini
+[video_mode]
+enabled=1
+af_level=16
+```
+
+## Complete Examples
+
+### High-End Gaming Setup (144Hz VRR)
+
+```ini
+[video_mode]
+enabled=1
+width=2560
+height=1440
+refresh_rate=144
+vsync=1
+windowed=1
+borderless=1
+af_level=16
+```
+
+### Standard 1080p Fullscreen
+
+```ini
+[video_mode]
+enabled=1
+width=1920
+height=1080
+refresh_rate=60
+vsync=0
+windowed=0
+borderless=0
+af_level=16
+```
+
+### Auto-Detect All Settings
+
+```ini
+[video_mode]
+enabled=1
+width=auto
+height=auto
+refresh_rate=0
+vsync=0
+windowed=0
+borderless=0
+af_level=16
+```
+
+### Competitive Low-Latency Setup
+
+```ini
+[video_mode]
+enabled=1
+width=1920
+height=1080
+refresh_rate=240
+vsync=0
+windowed=0
+borderless=0
+af_level=16
+```
+
+Use with `chimera_throttle_fps 300` for capped frame rate.

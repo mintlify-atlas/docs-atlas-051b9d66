@@ -1,0 +1,96 @@
+---
+title: Custom Edition Map Support
+description: Enable Halo Custom Edition maps on retail Halo PC
+---
+
+Chimera enables Halo Custom Edition map support when playing the base Halo PC (retail) game. This allows you to play custom maps created for Halo Custom Edition without needing to install Custom Edition itself.
+
+## Overview
+
+By default, Halo PC (retail) cannot load Custom Edition maps because they reference different resource maps (bitmaps, sounds, and localization data). Chimera bridges this gap by allowing you to add Custom Edition resource maps alongside your retail installation.
+
+## Required Files
+
+To enable Custom Edition map support, you need three resource map files from Halo Custom Edition:
+
+- `custom_bitmaps.map` - Contains textures and bitmap resources
+- `custom_sounds.map` - Contains audio and sound resources  
+- `custom_loc.map` - Contains localization and string data
+
+## Installation
+
+<Steps>
+  <Step title="Obtain Custom Edition resource maps">
+    You can get these files from the Halo Custom Edition installer. You have two options:
+    
+    **Option 1: Install Halo Custom Edition**
+    - Download and install the official Halo Custom Edition
+    - Navigate to the Custom Edition maps folder
+    - Copy `bitmaps.map`, `sounds.map`, and `loc.map`
+    
+    **Option 2: Extract without installing**
+    - Download the Halo Custom Edition installer
+    - Use an archiver program like [7-Zip](https://www.7-zip.org/download.html) (Windows) or [p7zip](https://wiki.archlinux.org/index.php/P7zip) (Linux)
+    - Extract the installer archive to access the map files directly
+  </Step>
+  
+  <Step title="Rename the resource maps">
+    Rename the three files to add the `custom_` prefix:
+    
+    - `bitmaps.map` → `custom_bitmaps.map`
+    - `sounds.map` → `custom_sounds.map`
+    - `loc.map` → `custom_loc.map`
+  </Step>
+  
+  <Step title="Copy to your Halo PC maps folder">
+    Place all three renamed files into your Halo PC `maps` folder (the same folder containing your retail map files).
+  </Step>
+  
+  <Step title="Verify installation">
+    Launch Halo PC with Chimera installed. If all three files are present and correctly named, Chimera will automatically enable Custom Edition map support.
+    
+    You should now be able to load Custom Edition maps (.map files) by placing them in your maps folder.
+  </Step>
+</Steps>
+
+## Important Notes
+
+<Warning>
+  **Do NOT overwrite your original files!**
+  
+  Never replace your original retail `bitmaps.map`, `sounds.map`, or `loc.map` files. You need these to load Halo PC maps. The Custom Edition resource maps must use the `custom_` prefix to coexist with retail maps.
+</Warning>
+
+<Info>
+  Chimera will **not** enable Custom Edition map support if any of the three `custom_*.map` files are missing. All three files must be present for the feature to work.
+</Info>
+
+## Technical Details
+
+When a Custom Edition map is loaded, Chimera:
+
+1. Detects that the map requires Custom Edition resources
+2. Loads resources from `custom_bitmaps.map`, `custom_sounds.map`, and `custom_loc.map` instead of the retail versions
+3. Seamlessly switches back to retail resources when loading retail maps
+
+This allows you to play both retail Halo PC maps and Custom Edition maps without switching game installations.
+
+## Troubleshooting
+
+### Custom Edition maps won't load
+
+- Verify all three `custom_*.map` files are in your maps folder
+- Check that the files are renamed correctly with the `custom_` prefix
+- Ensure Chimera is properly installed (strings.dll)
+
+### Missing textures or sounds
+
+- Confirm you have the correct Custom Edition resource maps
+- The resource maps should match the version of Custom Edition maps you're trying to play
+- Re-extract the files from a fresh Custom Edition installer if needed
+
+### Maps crash on load
+
+- Some heavily modded Custom Edition maps may require specific Custom Edition builds
+- Verify the map file isn't corrupted by checking its file size
+- Check if the map is compressed - see [Compressed Maps](/advanced/compressed-maps) for more information

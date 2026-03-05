@@ -1,0 +1,356 @@
+---
+title: 'Visual Commands'
+description: 'Commands to customize visual settings and display options'
+icon: 'eye'
+---
+
+Visual commands allow you to customize how Halo looks and performs, including field of view, resolution fixes, and performance overlays.
+
+## Field of View
+
+### chimera_fov
+
+Set your field of view. End with "v" to lock to a vertical FoV, or use "auto" for automatic FoV.
+
+<ParamField path="degrees" type="number | string">
+  Field of view in degrees, or "auto" for automatic FoV. Append "v" for vertical FoV (e.g., "90v")
+</ParamField>
+
+```bash
+chimera_fov 90        # Set to 90 degrees horizontal
+chimera_fov 90v       # Set to 90 degrees vertical (recommended)
+chimera_fov auto      # Automatic FoV
+```
+
+<Info>
+Using vertical FoV helps prevent distortion when switching aspect ratios.
+</Info>
+
+### chimera_fov_cinematic
+
+Set FoV specifically for cinematic sequences. Falls back to `chimera_fov` if not set.
+
+<ParamField path="degrees" type="number | string">
+  Field of view for cinematics
+</ParamField>
+
+```bash
+chimera_fov_cinematic 70v
+```
+
+### chimera_fov_vehicle
+
+Set FoV specifically for vehicle views. Falls back to `chimera_fov` if not set.
+
+<ParamField path="degrees" type="number | string">
+  Field of view for vehicles
+</ParamField>
+
+```bash
+chimera_fov_vehicle 100v
+```
+
+### chimera_lock_fp_model_fov
+
+Prevents the game from scaling first-person weapon model FoV with camera FoV changes.
+
+<ParamField path="enabled" type="boolean">
+  true to lock first-person model FoV, false to allow scaling
+</ParamField>
+
+```bash
+chimera_lock_fp_model_fov true
+```
+
+## Widescreen & Resolution
+
+### chimera_widescreen_fix
+
+Fix scaling of HUD, menu, and text elements for wider aspect ratios.
+
+<ParamField path="mode" type="0 | 1 | 2 | 3">
+  - `0`: Disabled
+  - `1`: HUD fills the screen
+  - `2`: HUD restricted to center 4:3 area
+  - `3`: HUD restricted to center 16:9 area
+</ParamField>
+
+```bash
+chimera_widescreen_fix 1  # Fill screen
+chimera_widescreen_fix 3  # 16:9 center area (recommended for ultrawide)
+```
+
+<Warning>
+This may break some custom maps that have non-standard HUD layouts.
+</Warning>
+
+### chimera_safe_zones
+
+Sets safe zone sizes for HUD margins. Values are clamped between stock PC values (8, 8) and stock Xbox values (48, 36).
+
+<ParamField path="horizontal" type="number">
+  Horizontal margin (8-48)
+</ParamField>
+
+<ParamField path="vertical" type="number">
+  Vertical margin (8-36)
+</ParamField>
+
+```bash
+chimera_safe_zones 16 12    # Custom margins
+chimera_safe_zones off      # Disable
+```
+
+## Performance Overlays
+
+### chimera_show_fps
+
+Display your current frames per second on screen.
+
+<ParamField path="enabled" type="boolean">
+  true to show FPS, false to hide
+</ParamField>
+
+```bash
+chimera_show_fps true
+```
+
+### chimera_throttle_fps
+
+Limit Halo's frame rate to a specific value.
+
+<ParamField path="fps" type="number">
+  Maximum FPS, or 0 to disable throttling
+</ParamField>
+
+```bash
+chimera_throttle_fps 144    # Cap at 144 FPS
+chimera_throttle_fps 0      # Unlimited
+```
+
+### chimera_uncap_cinematic
+
+Remove the 30 FPS cap from cinematic sequences.
+
+<ParamField path="enabled" type="boolean">
+  true to uncap, false to keep 30 FPS limit
+</ParamField>
+
+```bash
+chimera_uncap_cinematic true
+```
+
+## Graphics Quality
+
+### chimera_af
+
+Enable anisotropic filtering for improved texture quality. Applies to both level geometry and individual objects.
+
+<ParamField path="level" type="number | boolean">
+  Filtering level (typically 2, 4, 8, or 16), or true/false to enable/disable
+</ParamField>
+
+```bash
+chimera_af 16        # 16x anisotropic filtering (recommended)
+chimera_af true      # Enable with default level
+chimera_af false     # Disable
+```
+
+### chimera_model_detail
+
+Force highest LOD (level of detail) for all models. The cryotube model always scales by 480p to prevent the "4K headless chief" glitch.
+
+<ParamField path="enabled" type="boolean">
+  true to force highest detail, false for normal behavior
+</ParamField>
+
+```bash
+chimera_model_detail true
+```
+
+### chimera_force_alternate_bump_attenuation
+
+Force alternate bump attenuation method for environmental bump mapping.
+
+<ParamField path="enabled" type="boolean">
+  true to force alternate method, false to use standard method
+</ParamField>
+
+```bash
+chimera_force_alternate_bump_attenuation true
+```
+
+## HUD Modifications
+
+### chimera_split_screen_hud
+
+Override the HUD with the split screen HUD layout.
+
+<ParamField path="enabled" type="boolean">
+  true to use split screen HUD, false for normal HUD
+</ParamField>
+
+```bash
+chimera_split_screen_hud true
+```
+
+## Visual Effects
+
+### chimera_block_zoom_blur
+
+Remove the blur effect when zoomed in with scoped weapons.
+
+<ParamField path="enabled" type="boolean">
+  true to block zoom blur, false to allow it
+</ParamField>
+
+```bash
+chimera_block_zoom_blur true
+```
+
+### chimera_block_letterbox
+
+Disable the letterbox effect during cutscenes.
+
+<ParamField path="enabled" type="boolean">
+  true to block letterbox, false to allow it
+</ParamField>
+
+```bash
+chimera_block_letterbox true
+```
+
+### chimera_block_multitexture_overlays
+
+Disable multitexture overlays (animated sniper scope ticks). Useful since most sniper scope tags are broken and misaligned.
+
+<ParamField path="enabled" type="boolean">
+  true to block overlays, false to allow them
+</ParamField>
+
+```bash
+chimera_block_multitexture_overlays true
+```
+
+## UI Elements
+
+### chimera_block_gametype_indicator
+
+Hide the gametype indicator that wasn't present in the original Xbox version.
+
+<ParamField path="enabled" type="boolean">
+  true to hide indicator, false to show it
+</ParamField>
+
+```bash
+chimera_block_gametype_indicator true
+```
+
+### chimera_block_loading_screen
+
+Disable the blinding loading screen when joining servers to prevent cheap deaths.
+
+<ParamField path="enabled" type="boolean">
+  true to block loading screen, false to show it
+</ParamField>
+
+```bash
+chimera_block_loading_screen true
+```
+
+### chimera_block_hold_f1
+
+Hide the "Hold F1 for score" message when joining servers.
+
+<ParamField path="enabled" type="boolean">
+  true to hide message, false to show it
+</ParamField>
+
+```bash
+chimera_block_hold_f1 true
+```
+
+### chimera_block_gametype_rules
+
+Hide the gametype rules display that appears briefly when joining Custom Edition servers.
+
+<ParamField path="enabled" type="boolean">
+  true to hide rules, false to show them
+</ParamField>
+
+```bash
+chimera_block_gametype_rules true
+```
+
+### chimera_block_button_quotes
+
+Remove quotation marks from button prompts (e.g., changes 'Hold "E"' to 'Hold E').
+
+<ParamField path="enabled" type="boolean">
+  true to remove quotes, false to keep them
+</ParamField>
+
+```bash
+chimera_block_button_quotes true
+```
+
+### chimera_block_server_ip
+
+Hide the server IP from the score screen. Useful for streamers.
+
+<ParamField path="enabled" type="boolean">
+  true to hide IP, false to show it
+</ParamField>
+
+```bash
+chimera_block_server_ip true
+```
+
+## Console Customization
+
+### chimera_console_prompt_color
+
+Set the color of console input text.
+
+<ParamField path="red" type="number">
+  Red component (0-255)
+</ParamField>
+
+<ParamField path="green" type="number">
+  Green component (0-255)
+</ParamField>
+
+<ParamField path="blue" type="number">
+  Blue component (0-255)
+</ParamField>
+
+```bash
+chimera_console_prompt_color 0 255 0      # Green
+chimera_console_prompt_color 255 255 0    # Yellow
+```
+
+## Equipment & Item Display
+
+### chimera_block_equipment_rotation
+
+Disable the netgame equipment rotation added in Halo PC to match Xbox appearance.
+
+<ParamField path="enabled" type="boolean">
+  true to disable rotation, false to allow it
+</ParamField>
+
+```bash
+chimera_block_equipment_rotation true
+```
+
+### chimera_shrink_empty_weapons
+
+Make empty weapons appear smaller so they're easier to identify and avoid.
+
+<ParamField path="enabled" type="boolean">
+  true to shrink empty weapons, false for normal size
+</ParamField>
+
+```bash
+chimera_shrink_empty_weapons true
+```

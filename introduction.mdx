@@ -1,0 +1,118 @@
+---
+title: Introduction
+description: Learn about Chimera, the comprehensive enhancement mod for Halo Combat Evolved PC
+---
+
+Chimera is the update to Halo: Combat Evolved for the PC that we should have had but never got. It provides extensive fixes, enhancements, and features while preserving the base game experience.
+
+## What is Chimera?
+
+Chimera is a comprehensive mod for Halo: Combat Evolved PC that fixes bugs, adds quality-of-life improvements, and enhances the game with modern features. Most features are opt-in to ensure the base game is preserved as much as possible.
+
+<Note>
+Chimera works by replacing the game's `strings.dll` file, making installation simple and reversible.
+</Note>
+
+## Key Features
+
+Chimera provides numerous enhancements across several categories:
+
+### Passive Features (Always On)
+
+- **Interpolation**: Smooth object movement beyond 30 FPS
+- **Increased Limits**: BSP polygon limit boosted to 32,767, visible objects to 1,024, draw distance to ~6.86 km
+- **Compressed Maps**: Support for zstd-compressed map files
+- **Fast Loading**: CRC32 verification only when loading maps, not at startup
+- **High FPS Fixes**: Camera shake, checkpoints, contrails, motion sensor, and auto-centering all work correctly at high frame rates
+- **Shader Fixes**: Restores Xbox-accurate rendering, fixes many Gearbox regressions
+- **Visual Fixes**: FOV consistency, model LOD, sun flares, zoom blur, multitexture overlays, z-fighting reduction
+
+### Optional Features
+
+- **Custom Field of View**: Adjust FOV with vertical FOV locking for aspect ratio consistency
+- **Widescreen Support**: Proper HUD scaling for ultrawide displays
+- **Mouse Enhancements**: Disable mouse acceleration, granular sensitivity control
+- **Lua Scripting**: Load custom scripts globally or per-map
+- **Map Downloading**: Automatic map downloads from HAC2 repository when joining servers
+- **Custom Chat**: Improved chat system with customizable colors and positioning
+- **Devmode**: Enable developer commands without blocking multiplayer
+
+<Accordion title="View All Commands">
+Chimera includes over 70 commands for customization:
+
+- `chimera_fov` - Set field of view
+- `chimera_block_mouse_acceleration` - Disable mouse acceleration
+- `chimera_show_fps` - Display FPS counter
+- `chimera_widescreen_fix` - Fix HUD scaling for widescreen
+- `chimera_interpolate` - Toggle interpolation
+- And many more...
+
+See the full command reference for details.
+</Accordion>
+
+## System Requirements
+
+### Minimum Requirements
+
+**Operating System:**
+- Windows 7 or later (recommended)
+- Windows XP or later (using dedicated Windows XP release)
+- Linux with Wine 4.0 or newer
+
+**Game Version:**
+- Halo: Combat Evolved PC version 1.10
+- OR Halo Custom Edition (any version)
+- OR Halo Trial
+
+<Warning>
+Chimera requires Halo PC version 1.10. Make sure to update your game before installing.
+</Warning>
+
+### Recommended Specifications
+
+For optimal performance with all features enabled:
+
+- **CPU**: Intel Core i3-2100 (3.1 GHz) or AMD FX 6100 (3.3 GHz) or better
+- **RAM**: 8 GB or more (for map caching features)
+- **GPU**: NVIDIA GeForce 8500 GT, ATI Radeon HD 5670, or better
+
+<Info>
+While Chimera isn't demanding, some features like interpolation and increased limits may impact performance on very old hardware.
+</Info>
+
+## Custom Edition Support on Retail
+
+Chimera enables Custom Edition map support on retail Halo PC. To use this feature:
+
+1. Obtain the Custom Edition resource maps (`bitmaps.map`, `loc.map`, `sounds.map`)
+2. Rename them with the `custom_` prefix
+3. Place them in your maps folder
+
+This allows you to play Custom Edition maps without installing Halo Custom Edition separately.
+
+## Mod Support
+
+Chimera supports loading binary mods (DLL files) from a `mods` folder in your game directory.
+
+<Warning>
+Chimera does **not** support HAC2 or Open Sauce due to conflicts. These mods modify the game in similar ways and cannot run together.
+</Warning>
+
+## License
+
+Chimera is licensed under **GNU General Public License version 3.0 (GPL-3.0)**.
+
+- Free and open source software
+- You can redistribute and modify under GPL-3.0 terms
+- No warranty provided
+- Source code available at [github.com/SnowyMouse/chimera](https://github.com/SnowyMouse/chimera)
+
+<Info>
+To use Chimera under a different license, you would need permission from all contributors.
+</Info>
+
+## What's Next?
+
+Ready to install Chimera? Check out the [Installation Guide](/installation) for step-by-step instructions.
+
+Once installed, see the [Quick Start Guide](/quickstart) to begin using Chimera's features.

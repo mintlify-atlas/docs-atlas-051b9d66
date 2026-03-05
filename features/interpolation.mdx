@@ -1,0 +1,255 @@
+---
+title: Interpolation
+description: Smooth object movement beyond the 30 FPS tick rate limitation
+icon: waveform
+---
+
+Interpolation is one of Chimera's most significant features, solving a fundamental issue in Halo PC where object movement is tied to the server tick rate.
+
+## The Problem
+
+Halo: Combat Evolved has a critical limitation inherited from the original Xbox version:
+
+<Warning>
+Object movement is tied to tick rate, meaning objects will **never move faster than 30 frames per second**, regardless of your actual frame rate.
+</Warning>
+
+This creates a jarring visual experience on modern displays running at 60 Hz, 144 Hz, or higher refresh rates. Even if you're rendering at 144 FPS, players and objects will appear to stutter because their positions only update 30 times per second.
+
+## The Solution
+
+Chimera adds **interpolation** to smooth object movement between ticks. The system intelligently predicts and smooths object positions, creating fluid motion that matches your frame rate.
+
+### What Gets Interpolated
+
+Chimera interpolates multiple game elements:
+
+- **Objects** - Players, vehicles, weapons, and all dynamic objects
+- **Camera** - First-person and third-person camera movement
+- **Particles** - Effects, explosions, and particle systems
+- **Lights** - Dynamic lighting effects
+- **Flags** - CTF flags and similar objects
+- **Antennas** - Warthog antennas and similar animated models
+- **First Person** - Weapon models and first-person animations
+
+## Technical Implementation
+
+### Tick Progress Calculation
+
+The interpolation system tracks progress between ticks:
+
+```cpp
+// From interpolate.cpp
+float interpolation_tick_progress = 0;
+
+static void on_preframe() noexcept {
+    if(game_paused()) {
+        return;
+    }
+    
+    interpolation_tick_progress = get_tick_progress();
+    
+    interpolate_antenna_before();
+    interpolate_flag_before();
+    interpolate_light_before();
+    interpolate_object_before();
+    interpolate_particle();
+}
+```
+
+### Frame Synchronization
+
+Interpolation hooks into Chimera's event system:
+
+1. **On Tick** - Store previous state and reset progress
+2. **Pre-frame** - Calculate interpolation progress (0.0 to 1.0)
+3. **Pre-camera** - Apply camera interpolation
+4. **Frame** - Restore original values after rendering
+
+<CodeGroup>
+```cpp src/chimera/fix/interpolate/interpolate.cpp
+static void on_tick() noexcept {
+    if(game_paused()) {
+        return;
+    }
+    
+    interpolate_antenna_on_tick();
+    interpolate_flag_on_tick();
+    interpolate_fp_on_tick();
+    interpolate_light_on_tick();
+    interpolate_object_on_tick();
+    interpolate_camera_on_tick();
+    interpolate_particle_on_tick();
+    interpolation_tick_progress = 0;
+}
+```
+
+```cpp Event Flow
+// Tick event (30 Hz)
+├─ Store previous positions
+├─ Reset interpolation progress
+└─ Update tick rate
+
+// Pre-frame event (Every rendered frame)
+├─ Calculate tick_progress (0.0-1.0)
+├─ Interpolate object positions
+└─ Apply smoothed values
+
+// Post-frame event
+└─ Restore original values
+```
+</CodeGroup>
+
+## Always Enabled
+
+<Info>
+Interpolation is **always enabled** in Chimera and cannot be disabled. This is a fundamental enhancement that all players benefit from.
+</Info>
+
+The system is designed to:
+
+- Work transparently without configuration
+- Maintain compatibility with all game modes
+- Preserve gameplay accuracy (only visual smoothing)
+- Handle game state changes automatically
+
+## Game State Handling
+
+### Pause Detection
+
+Interpolation automatically pauses when the game is paused:
+
+```cpp
+if(game_paused()) {
+    return;
+}
+```
+
+### Buffer Clearing
+
+Interpolation buffers are cleared on major game state changes:
+
+```cpp
+void clear_buffers() noexcept {
+    interpolate_object_clear();
+    interpolate_particle_clear();
+    interpolate_light_clear();
+    interpolate_flag_clear();
+    interpolate_camera_clear();
+    interpolate_fp_clear();
+}
+```
+
+This prevents visual glitches when:
+
+- Loading a new map
+- Reverting to checkpoint
+- Respawning
+- Major game events
+
+## Performance Characteristics
+
+### Optimized for Modern Hardware
+
+Interpolation is highly optimized:
+
+- **Minimal CPU overhead** - Simple linear interpolation
+- **No memory leaks** - Buffers cleared on state changes
+- **Cache-friendly** - Sequential memory access patterns
+- **Frame-rate independent** - Scales with any FPS
+
+### No Gameplay Impact
+
+<Note>
+Interpolation is **purely visual**. All game logic, physics, and netcode still run at the server's tick rate (typically 30 ticks per second).
+</Note>
+
+This means:
+
+- Hit detection is unaffected
+- Physics simulation remains identical
+- Network synchronization stays the same
+- Demo playback compatibility preserved
+
+## Visual Comparison
+
+<Tabs>
+  <Tab title="Without Interpolation">
+    At 144 FPS without interpolation:
+    - Objects update position 30 times per second
+    - Visible stuttering on smooth camera pans
+    - Choppy vehicle movement
+    - Jarring player animations
+  </Tab>
+  
+  <Tab title="With Interpolation">
+    At 144 FPS with interpolation:
+    - Smooth motion at full frame rate
+    - Natural-looking movement
+    - Fluid camera tracking
+    - Seamless animations
+  </Tab>
+</Tabs>
+
+## First Person Camera
+
+Chimera also handles first-person camera interpolation:
+
+```cpp
+float *first_person_camera_tick_rate = nullptr;
+
+// Update FP camera tick rate dynamically
+float current_tick_rate = effective_tick_rate();
+if(*first_person_camera_tick_rate != current_tick_rate) {
+    overwrite(first_person_camera_tick_rate, current_tick_rate);
+}
+```
+
+This ensures weapon bob, recoil, and view movement remain smooth.
+
+## Related Features
+
+<CardGroup cols={2}>
+  <Card title="Uncap Cinematic" icon="film" href="/commands/uncap-cinematic">
+    Uncap cinematic frame rate from 30 FPS
+  </Card>
+  
+  <Card title="Throttle FPS" icon="gauge" href="/commands/throttle-fps">
+    Limit frame rate for consistent interpolation
+  </Card>
+  
+  <Card title="Bug Fixes" icon="wrench" href="/features/bug-fixes">
+    Other frame-rate related fixes
+  </Card>
+  
+  <Card title="Auto Center Fix" icon="crosshairs" href="/features/bug-fixes#auto-center-fix">
+    Fixes vehicle handling at high FPS
+  </Card>
+</CardGroup>
+
+## Technical Notes
+
+### Implementation Files
+
+The interpolation system is implemented across multiple files:
+
+- `src/chimera/fix/interpolate/interpolate.cpp` - Core system
+- `src/chimera/fix/interpolate/object.cpp` - Object interpolation  
+- `src/chimera/fix/interpolate/camera.cpp` - Camera interpolation
+- `src/chimera/fix/interpolate/particle.cpp` - Particle effects
+- `src/chimera/fix/interpolate/light.cpp` - Dynamic lights
+- `src/chimera/fix/interpolate/flag.cpp` - Flag objects
+- `src/chimera/fix/interpolate/fp.cpp` - First person view
+- `src/chimera/fix/interpolate/antenna.cpp` - Antenna animations
+
+### Built-in Interpolation Override
+
+Chimera disables Halo's built-in first-person camera interpolation:
+
+```cpp
+// Block built-in fp camera interpolation. Let Chimera do it instead.
+overwrite(get_chimera().get_signature("camera_interpolation_sig").data() + 0xF, 
+          static_cast<unsigned char>(0xEB));
+```
+
+This provides more consistent and higher-quality interpolation.

@@ -1,0 +1,166 @@
+---
+title: 'Controller Commands'
+description: 'Commands for gamepad configuration and controller settings'
+icon: 'gamepad'
+---
+
+Controller commands allow you to configure gamepad behavior, including aim assist, deadzones, and analog stick movement.
+
+## Aim Assist
+
+### chimera_aim_assist
+
+Enable Halo's fixed aim assist for analog sticks. The PC release broke aim assist, and Chimera fixes it.
+
+<ParamField path="enabled" type="boolean">
+  true to enable aim assist, false to disable
+</ParamField>
+
+```bash
+chimera_aim_assist true
+```
+
+<Info>
+Aim assist only works with analog stick input, not mouse and keyboard.
+</Info>
+
+## Analog Input Configuration
+
+### chimera_deadzones
+
+Set deadzones for analog stick input to prevent drift and unwanted movement.
+
+<ParamField path="value" type="number">
+  Deadzone amount (0.0 to 1.0)
+</ParamField>
+
+```bash
+chimera_deadzones 0.15    # 15% deadzone (recommended starting point)
+chimera_deadzones 0.25    # Larger deadzone for worn controllers
+```
+
+<Tip>
+Start with a value around 0.15 and adjust based on your controller's condition. Increase if you experience drift, decrease if the controller feels unresponsive.
+</Tip>
+
+### chimera_diagonals
+
+Set diagonal sensitivity for analog stick movement. This compensates for Halo converting analog input to digital movement (the netcode doesn't support analog movement).
+
+<ParamField path="value" type="number">
+  Diagonal sensitivity (0.0 to 1.0)
+</ParamField>
+
+```bash
+chimera_diagonals 0.75    # Recommended value
+chimera_diagonals 0.85    # More sensitive diagonals
+```
+
+<Info>
+A value of 0.75 provides good diagonal movement while maintaining accuracy.
+</Info>
+
+## Auto-centering
+
+### chimera_block_auto_center
+
+Disable automatic view centering in vehicles.
+
+<ParamField path="enabled" type="boolean">
+  true to disable auto-centering, false to enable it
+</ParamField>
+
+```bash
+chimera_block_auto_center true
+```
+
+<Note>
+Chimera fixes the frame-rate dependent auto-centering bug, so this command is primarily for user preference.
+</Note>
+
+## Mouse Settings
+
+### chimera_block_mouse_acceleration
+
+Disable Halo's built-in mouse acceleration. Halo uses raw input but adds its own acceleration on top.
+
+<ParamField path="enabled" type="boolean">
+  true to disable acceleration, false to enable it
+</ParamField>
+
+```bash
+chimera_block_mouse_acceleration true
+```
+
+<Warning>
+This only affects Halo's internal acceleration. Your operating system's mouse settings (bypassed by raw input) are not affected unless running in Wine.
+</Warning>
+
+### chimera_mouse_sensitivity
+
+Set mouse sensitivity with more granular control than Halo's built-in settings.
+
+<ParamField path="horizontal" type="number | 'off'">
+  Horizontal sensitivity multiplier, or "off" to disable
+</ParamField>
+
+<ParamField path="vertical" type="number">
+  Vertical sensitivity multiplier (required if horizontal is set)
+</ParamField>
+
+```bash
+chimera_mouse_sensitivity 2 1       # Double horizontal, normal vertical
+chimera_mouse_sensitivity 1.5 0.75  # Custom ratio
+chimera_mouse_sensitivity off       # Use Halo's default settings
+```
+
+<Info>
+It's recommended to disable mouse acceleration when using low sensitivity values.
+</Info>
+
+#### Sensitivity Reference Table
+
+Equivalent values for Halo's built-in sensitivity settings:
+
+| Halo Setting | Horizontal | Vertical |
+|--------------|------------|----------|
+| 10           | 4.0        | 2.0      |
+| 9            | 4.0        | 2.0      |
+| 8            | 3.0        | 1.5      |
+| 7            | 2.0        | 1.0      |
+| 6            | 1.5        | 0.75     |
+| 5            | 1.25       | 0.625    |
+| 4            | 1.0        | 0.5      |
+| 3            | 0.75       | 0.375    |
+| 2            | 0.5        | 0.25     |
+| 1            | 0.25       | 0.125    |
+
+## Controller Configuration Files
+
+For advanced controller configuration, edit the controller settings in `chimera.ini`. Chimera supports extensive gamepad customization including:
+
+- Button remapping
+- Trigger deadzones
+- Stick curve adjustments
+- Multiple controller profiles
+
+See the [Controller Configuration](/configuration/chimera-ini#controller-settings) section for detailed information.
+
+<Tip>
+Premade controller configurations are available in the [Chimera repository](https://github.com/SnowyMouse/chimera/tree/master/controller_config).
+</Tip>
+
+## Auto Uncrouching
+
+### chimera_auto_uncrouch
+
+Control whether the game automatically uncrouches when running at full speed (original Halo PC behavior).
+
+<ParamField path="enabled" type="boolean">
+  true to re-enable auto-uncrouching, false to allow crouching while running
+</ParamField>
+
+```bash
+chimera_auto_uncrouch false  # Allow crouch-running (default)
+chimera_auto_uncrouch true   # Original behavior
+```

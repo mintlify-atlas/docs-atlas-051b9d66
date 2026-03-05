@@ -1,0 +1,417 @@
+---
+title: "Font Settings"
+description: "Override game fonts with custom system fonts"
+---
+
+## Overview
+
+The `[font_override]` section allows you to replace Chimera's default fonts with system fonts. This provides extensive customization for text appearance throughout the game.
+
+<Warning>
+Font override may have issues on Wine. Enabling this will also force the widescreen fix to be on.
+
+You will need the latest Direct3D 9 runtime installed. Download it here: [microsoft.com/download](https://www.microsoft.com/en-us/download/details.aspx?id=35)
+</Warning>
+
+## Enable Font Override
+
+<ParamField path="enabled" type="boolean" default="0">
+  Enable overriding Chimera's fonts with system fonts.
+</ParamField>
+
+<ParamField path="system_font_override" type="boolean" default="0">
+  Enable system font override specifically.
+</ParamField>
+
+```ini
+[font_override]
+enabled=1
+system_font_override=1
+```
+
+## Available Font Types
+
+Chimera supports overriding six different font types:
+
+- **System** - General UI text
+- **Large** - Large UI elements
+- **Small** - Small UI text
+- **Smaller** - Smallest UI text
+- **Ticker** - Scrolling messages
+- **Console** - Console output
+
+## Font Configuration
+
+Each font type has the same set of configuration options:
+
+### System Font
+
+<ParamField path="system_font_override" type="boolean" default="0">
+  Enable override for system font.
+</ParamField>
+
+<ParamField path="system_font_family" type="string" default="Interstate-Bold">
+  Font family name from your system fonts.
+</ParamField>
+
+<ParamField path="system_font_weight" type="number" default="400">
+  Font weight. Scale of 100 (light) to 900 (boldest). 400 is normal. Not all weights work on all fonts.
+</ParamField>
+
+<ParamField path="system_font_size" type="number" default="20">
+  Font size in points.
+</ParamField>
+
+<ParamField path="system_font_x_offset" type="number" default="0">
+  Horizontal offset adjustment in pixels.
+</ParamField>
+
+<ParamField path="system_font_y_offset" type="number" default="1">
+  Vertical offset adjustment in pixels.
+</ParamField>
+
+<ParamField path="system_font_shadow_offset_x" type="number" default="2">
+  Shadow X offset. If all shadow offsets are 0, shadows are disabled (faster but harder to read).
+</ParamField>
+
+<ParamField path="system_font_shadow_offset_y" type="number" default="2">
+  Shadow Y offset. If all shadow offsets are 0, shadows are disabled (faster but harder to read).
+</ParamField>
+
+```ini
+[font_override]
+system_font_override=1
+system_font_family=Interstate-Bold
+system_font_weight=400
+system_font_size=20
+system_font_x_offset=0
+system_font_y_offset=1
+system_font_shadow_offset_x=2
+system_font_shadow_offset_y=2
+```
+
+### Large Font
+
+<ParamField path="large_font_override" type="boolean" default="0">
+  Enable override for large font.
+</ParamField>
+
+<ParamField path="large_font_family" type="string" default="Interstate-Bold">
+  Font family name.
+</ParamField>
+
+<ParamField path="large_font_weight" type="number" default="400">
+  Font weight (100-900).
+</ParamField>
+
+<ParamField path="large_font_size" type="number" default="20">
+  Font size in points.
+</ParamField>
+
+<ParamField path="large_font_offset_x" type="number" default="0">
+  Horizontal offset in pixels.
+</ParamField>
+
+<ParamField path="large_font_offset_y" type="number" default="1">
+  Vertical offset in pixels.
+</ParamField>
+
+<ParamField path="large_font_shadow_offset_x" type="number" default="2">
+  Shadow X offset.
+</ParamField>
+
+<ParamField path="large_font_shadow_offset_y" type="number" default="2">
+  Shadow Y offset.
+</ParamField>
+
+```ini
+[font_override]
+large_font_override=1
+large_font_family=Interstate-Bold
+large_font_weight=400
+large_font_size=20
+large_font_offset_x=0
+large_font_offset_y=1
+large_font_shadow_offset_x=2
+large_font_shadow_offset_y=2
+```
+
+### Small Font
+
+<ParamField path="small_font_override" type="boolean" default="0">
+  Enable override for small font.
+</ParamField>
+
+<ParamField path="small_font_family" type="string" default="Interstate-Bold">
+  Font family name.
+</ParamField>
+
+<ParamField path="small_font_weight" type="number" default="400">
+  Font weight (100-900).
+</ParamField>
+
+<ParamField path="small_font_size" type="number" default="15">
+  Font size in points.
+</ParamField>
+
+<ParamField path="small_font_offset_x" type="number" default="0">
+  Horizontal offset in pixels.
+</ParamField>
+
+<ParamField path="small_font_offset_y" type="number" default="3">
+  Vertical offset in pixels.
+</ParamField>
+
+<ParamField path="small_font_shadow_offset_x" type="number" default="2">
+  Shadow X offset.
+</ParamField>
+
+<ParamField path="small_font_shadow_offset_y" type="number" default="2">
+  Shadow Y offset.
+</ParamField>
+
+```ini
+[font_override]
+small_font_override=1
+small_font_family=Interstate-Bold
+small_font_weight=400
+small_font_size=15
+small_font_offset_x=0
+small_font_offset_y=3
+small_font_shadow_offset_x=2
+small_font_shadow_offset_y=2
+```
+
+### Smaller Font
+
+<ParamField path="smaller_font_override" type="boolean" default="0">
+  Enable override for smaller font.
+</ParamField>
+
+<ParamField path="smaller_font_family" type="string" default="Interstate-Bold">
+  Font family name.
+</ParamField>
+
+<ParamField path="smaller_font_weight" type="number" default="400">
+  Font weight (100-900).
+</ParamField>
+
+<ParamField path="smaller_font_size" type="number" default="11">
+  Font size in points.
+</ParamField>
+
+<ParamField path="smaller_font_offset_x" type="number" default="0">
+  Horizontal offset in pixels.
+</ParamField>
+
+<ParamField path="smaller_font_offset_y" type="number" default="4">
+  Vertical offset in pixels.
+</ParamField>
+
+<ParamField path="smaller_font_shadow_offset_x" type="number" default="2">
+  Shadow X offset.
+</ParamField>
+
+<ParamField path="smaller_font_shadow_offset_y" type="number" default="2">
+  Shadow Y offset.
+</ParamField>
+
+```ini
+[font_override]
+smaller_font_override=1
+smaller_font_family=Interstate-Bold
+smaller_font_weight=400
+smaller_font_size=11
+smaller_font_offset_x=0
+smaller_font_offset_y=4
+smaller_font_shadow_offset_x=2
+smaller_font_shadow_offset_y=2
+```
+
+### Ticker Font
+
+<ParamField path="ticker_font_override" type="boolean" default="0">
+  Enable override for ticker font (scrolling messages).
+</ParamField>
+
+<ParamField path="ticker_font_family" type="string" default="Lucida Console">
+  Font family name. Monospace fonts recommended for ticker.
+</ParamField>
+
+<ParamField path="ticker_font_weight" type="number" default="400">
+  Font weight (100-900).
+</ParamField>
+
+<ParamField path="ticker_font_size" type="number" default="11">
+  Font size in points.
+</ParamField>
+
+<ParamField path="ticker_font_offset_x" type="number" default="0">
+  Horizontal offset in pixels.
+</ParamField>
+
+<ParamField path="ticker_font_offset_y" type="number" default="0">
+  Vertical offset in pixels.
+</ParamField>
+
+<ParamField path="ticker_font_shadow_offset_x" type="number" default="2">
+  Shadow X offset.
+</ParamField>
+
+<ParamField path="ticker_font_shadow_offset_y" type="number" default="2">
+  Shadow Y offset.
+</ParamField>
+
+```ini
+[font_override]
+ticker_font_override=1
+ticker_font_family=Lucida Console
+ticker_font_weight=400
+ticker_font_size=11
+ticker_font_offset_x=0
+ticker_font_offset_y=0
+ticker_font_shadow_offset_x=2
+ticker_font_shadow_offset_y=2
+```
+
+### Console Font
+
+<ParamField path="console_font_override" type="boolean" default="0">
+  Enable override for console font.
+</ParamField>
+
+<ParamField path="console_font_family" type="string" default="Hack Bold">
+  Font family name. Monospace fonts recommended for console.
+</ParamField>
+
+<ParamField path="console_font_weight" type="number" default="400">
+  Font weight (100-900).
+</ParamField>
+
+<ParamField path="console_font_size" type="number" default="14">
+  Font size in points.
+</ParamField>
+
+<ParamField path="console_font_offset_x" type="number" default="0">
+  Horizontal offset in pixels.
+</ParamField>
+
+<ParamField path="console_font_offset_y" type="number" default="0">
+  Vertical offset in pixels.
+</ParamField>
+
+<ParamField path="console_font_shadow_offset_x" type="number" default="2">
+  Shadow X offset.
+</ParamField>
+
+<ParamField path="console_font_shadow_offset_y" type="number" default="2">
+  Shadow Y offset.
+</ParamField>
+
+```ini
+[font_override]
+console_font_override=1
+console_font_family=Hack Bold
+console_font_weight=400
+console_font_size=14
+console_font_offset_x=0
+console_font_offset_y=0
+console_font_shadow_offset_x=2
+console_font_shadow_offset_y=2
+```
+
+## Font Weight Reference
+
+| Weight | Description |
+|--------|-------------|
+| 100    | Thin        |
+| 200    | Extra Light |
+| 300    | Light       |
+| 400    | Normal      |
+| 500    | Medium      |
+| 600    | Semi Bold   |
+| 700    | Bold        |
+| 800    | Extra Bold  |
+| 900    | Black       |
+
+<Note>
+Not all fonts support all weight values. If a weight isn't available, the font will use the closest available weight.
+</Note>
+
+## Shadow Performance
+
+<Tip>
+Setting all shadow offsets to `0` disables shadows, which is **much faster** but makes text harder to read.
+</Tip>
+
+```ini
+# No shadows (faster performance)
+system_font_shadow_offset_x=0
+system_font_shadow_offset_y=0
+
+# With shadows (better readability)
+system_font_shadow_offset_x=2
+system_font_shadow_offset_y=2
+```
+
+## Popular Font Combinations
+
+### Modern Clean Look
+
+```ini
+[font_override]
+enabled=1
+
+# All fonts use Segoe UI
+system_font_override=1
+system_font_family=Segoe UI
+system_font_weight=600
+system_font_size=20
+
+small_font_override=1
+small_font_family=Segoe UI
+small_font_weight=400
+small_font_size=15
+
+console_font_override=1
+console_font_family=Consolas
+console_font_weight=400
+console_font_size=14
+```
+
+### Retro Monospace
+
+```ini
+[font_override]
+enabled=1
+
+# All fonts monospace
+system_font_override=1
+system_font_family=Courier New
+system_font_weight=700
+
+small_font_override=1
+small_font_family=Courier New
+small_font_weight=400
+
+console_font_override=1
+console_font_family=Courier New
+console_font_weight=400
+```
+
+### High Performance (No Shadows)
+
+```ini
+[font_override]
+enabled=1
+
+system_font_override=1
+system_font_family=Arial
+system_font_shadow_offset_x=0
+system_font_shadow_offset_y=0
+
+small_font_override=1
+small_font_family=Arial
+small_font_shadow_offset_x=0
+small_font_shadow_offset_y=0
+```

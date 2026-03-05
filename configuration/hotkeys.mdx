@@ -1,0 +1,418 @@
+---
+title: "Hotkeys"
+description: "Configure keyboard shortcuts to execute Chimera commands and Halo scripts"
+---
+
+## Overview
+
+The `[hotkey]` section allows you to configure keyboard shortcuts that execute either Halo scripts OR Chimera commands. This provides quick access to frequently used functionality.
+
+## Enable Hotkeys
+
+<ParamField path="enabled" type="boolean" default="0">
+  Enable hotkey support. Must be set to `1` for hotkeys to work.
+</ParamField>
+
+```ini
+[hotkey]
+enabled=1
+```
+
+## Hotkey Types
+
+Chimera supports four categories of hotkeys:
+
+1. **Function Keys** (`F1` - `F12`)
+2. **Alt+Shift+Number** (`Alt+Shift+0-9` and numpad)
+3. **Alt+Number** (`Alt+0-9` and numpad)
+4. **Ctrl+Number** (`Ctrl+0-9` and numpad)
+5. **Ctrl+Alt+Shift+Number** (`Ctrl+Alt+Shift+0-9` and numpad)
+
+## Function Keys
+
+Map `F1` through `F12` to commands or scripts.
+
+<ParamField path="f1" type="string">
+  Command or script to execute when F1 is pressed.
+</ParamField>
+
+<ParamField path="f2" type="string">
+  Command or script to execute when F2 is pressed.
+</ParamField>
+
+<ParamField path="f3" type="string">
+  Command or script to execute when F3 is pressed.
+</ParamField>
+
+<ParamField path="f4" type="string">
+  Command or script to execute when F4 is pressed.
+</ParamField>
+
+<ParamField path="f5" type="string" default="chimera_send_chat_message 0 taxi">
+  Command or script to execute when F5 is pressed. Default sends "taxi" to chat.
+</ParamField>
+
+<ParamField path="f6" type="string">
+  Command or script to execute when F6 is pressed.
+</ParamField>
+
+<ParamField path="f7" type="string">
+  Command or script to execute when F7 is pressed.
+</ParamField>
+
+<ParamField path="f8" type="string">
+  Command or script to execute when F8 is pressed.
+</ParamField>
+
+<ParamField path="f9" type="string">
+  Command or script to execute when F9 is pressed.
+</ParamField>
+
+<ParamField path="f10" type="string">
+  Command or script to execute when F10 is pressed.
+</ParamField>
+
+<ParamField path="f11" type="string">
+  Command or script to execute when F11 is pressed.
+</ParamField>
+
+<ParamField path="f12" type="string">
+  Command or script to execute when F12 is pressed.
+</ParamField>
+
+### Example: Function Keys
+
+```ini
+[hotkey]
+enabled=1
+
+f1=chimera_spectate_previous
+f2=chimera_spectate_next
+f5=chimera_send_chat_message 0 taxi
+f9=chimera_show_fps 1
+f10=chimera_show_fps 0
+```
+
+## Alt+Shift+Number (Spectator Controls)
+
+Default bindings for spectator mode and debug camera.
+
+<ParamField path="alt_shift_1" type="string" default="chimera_spectate_previous">
+  Spectate previous player.
+</ParamField>
+
+<ParamField path="alt_shift_2" type="string" default="chimera_spectate_next">
+  Spectate next player.
+</ParamField>
+
+<ParamField path="alt_shift_3" type="string" default="chimera_spectate 0">
+  Stop spectating.
+</ParamField>
+
+<ParamField path="alt_shift_4" type="string" default="begin (debug_camera_save) (debug_camera_load) || begin (camera_control 0)">
+  Toggle debug camera.
+</ParamField>
+
+<ParamField path="alt_shift_5" type="string">
+  Alt+Shift+5 hotkey.
+</ParamField>
+
+<ParamField path="alt_shift_6" type="string">
+  Alt+Shift+6 hotkey.
+</ParamField>
+
+<ParamField path="alt_shift_7" type="string">
+  Alt+Shift+7 hotkey.
+</ParamField>
+
+<ParamField path="alt_shift_8" type="string">
+  Alt+Shift+8 hotkey.
+</ParamField>
+
+<ParamField path="alt_shift_9" type="string">
+  Alt+Shift+9 hotkey.
+</ParamField>
+
+<ParamField path="alt_shift_0" type="string">
+  Alt+Shift+0 hotkey.
+</ParamField>
+
+Numpad equivalents: `alt_shift_num_0` through `alt_shift_num_9`
+
+### Example: Spectator Hotkeys
+
+```ini
+[hotkey]
+alt_shift_1=chimera_spectate_previous
+alt_shift_2=chimera_spectate_next
+alt_shift_3=chimera_spectate 0
+alt_shift_4=begin (debug_camera_save) (debug_camera_load) || begin (camera_control 0)
+```
+
+## Alt+Number (Bookmarks)
+
+Default bindings for server bookmarks.
+
+<ParamField path="alt_1" type="string" default="chimera_bookmark_connect 1">
+  Connect to bookmark 1.
+</ParamField>
+
+<ParamField path="alt_2" type="string" default="chimera_bookmark_connect 2">
+  Connect to bookmark 2.
+</ParamField>
+
+<ParamField path="alt_3" type="string" default="chimera_bookmark_connect 3">
+  Connect to bookmark 3.
+</ParamField>
+
+<ParamField path="alt_4" type="string" default="chimera_bookmark_connect 4">
+  Connect to bookmark 4.
+</ParamField>
+
+<ParamField path="alt_5" type="string" default="chimera_bookmark_connect 5">
+  Connect to bookmark 5.
+</ParamField>
+
+<ParamField path="alt_6" type="string" default="chimera_bookmark_connect 6">
+  Connect to bookmark 6.
+</ParamField>
+
+<ParamField path="alt_7" type="string" default="chimera_bookmark_connect 7">
+  Connect to bookmark 7.
+</ParamField>
+
+<ParamField path="alt_8" type="string" default="chimera_bookmark_connect 8">
+  Connect to bookmark 8.
+</ParamField>
+
+<ParamField path="alt_9" type="string" default="chimera_bookmark_connect 9">
+  Connect to bookmark 9.
+</ParamField>
+
+<ParamField path="alt_0" type="string" default="chimera_bookmark_list">
+  List all bookmarks.
+</ParamField>
+
+Numpad equivalents: `alt_num_0` through `alt_num_9`
+
+### Example: Bookmark Hotkeys
+
+```ini
+[hotkey]
+alt_1=chimera_bookmark_connect 1
+alt_2=chimera_bookmark_connect 2
+alt_3=chimera_bookmark_connect 3
+alt_0=chimera_bookmark_list
+```
+
+## Ctrl+Number (History)
+
+Default bindings for server connection history.
+
+<ParamField path="ctrl_1" type="string" default="chimera_history_connect 1">
+  Connect to history entry 1.
+</ParamField>
+
+<ParamField path="ctrl_2" type="string" default="chimera_history_connect 2">
+  Connect to history entry 2.
+</ParamField>
+
+<ParamField path="ctrl_3" type="string" default="chimera_history_connect 3">
+  Connect to history entry 3.
+</ParamField>
+
+<ParamField path="ctrl_4" type="string" default="chimera_history_connect 4">
+  Connect to history entry 4.
+</ParamField>
+
+<ParamField path="ctrl_5" type="string" default="chimera_history_connect 5">
+  Connect to history entry 5.
+</ParamField>
+
+<ParamField path="ctrl_6" type="string" default="chimera_history_connect 6">
+  Connect to history entry 6.
+</ParamField>
+
+<ParamField path="ctrl_7" type="string" default="chimera_history_connect 7">
+  Connect to history entry 7.
+</ParamField>
+
+<ParamField path="ctrl_8" type="string" default="chimera_history_connect 8">
+  Connect to history entry 8.
+</ParamField>
+
+<ParamField path="ctrl_9" type="string" default="chimera_history_connect 9">
+  Connect to history entry 9.
+</ParamField>
+
+<ParamField path="ctrl_0" type="string" default="chimera_history_list">
+  List connection history.
+</ParamField>
+
+Numpad equivalents: `ctrl_num_0` through `ctrl_num_9`
+
+### Example: History Hotkeys
+
+```ini
+[hotkey]
+ctrl_1=chimera_history_connect 1
+ctrl_2=chimera_history_connect 2
+ctrl_3=chimera_history_connect 3
+ctrl_0=chimera_history_list
+```
+
+## Ctrl+Alt+Shift+Number (Advanced)
+
+Default bindings for advanced functionality.
+
+<ParamField path="ctrl_alt_shift_1" type="string" default="chimera_block_extra_weapon">
+  Block currently held weapon (useful in games where you hold 3+ weapons).
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_2" type="string" default="chimera_unblock_all_extra_weapons">
+  Unblock all weapons.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_3" type="string" default="begin (cinematic_stop) (camera_control 0) (show_hud 1)">
+  Abort current cutscene. Useful for maps with annoying startup cutscenes.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_4" type="string">
+  Ctrl+Alt+Shift+4 hotkey.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_5" type="string">
+  Ctrl+Alt+Shift+5 hotkey.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_6" type="string">
+  Ctrl+Alt+Shift+6 hotkey.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_7" type="string">
+  Ctrl+Alt+Shift+7 hotkey.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_8" type="string">
+  Ctrl+Alt+Shift+8 hotkey.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_9" type="string">
+  Ctrl+Alt+Shift+9 hotkey.
+</ParamField>
+
+<ParamField path="ctrl_alt_shift_0" type="string">
+  Ctrl+Alt+Shift+0 hotkey.
+</ParamField>
+
+Numpad equivalents: `ctrl_alt_shift_num_0` through `ctrl_alt_shift_num_9`
+
+### Example: Advanced Hotkeys
+
+```ini
+[hotkey]
+ctrl_alt_shift_1=chimera_block_extra_weapon
+ctrl_alt_shift_2=chimera_unblock_all_extra_weapons
+ctrl_alt_shift_3=begin (cinematic_stop) (camera_control 0) (show_hud 1)
+```
+
+## Command vs Script Syntax
+
+### Chimera Commands
+
+Execute Chimera-specific commands:
+
+```ini
+f1=chimera_spectate_next
+f2=chimera_show_fps 1
+f3=chimera_send_chat_message 0 Hello!
+```
+
+### Halo Scripts
+
+Execute Halo scripting commands:
+
+```ini
+f4=sv_map bloodgulch slayer
+f5=sv_say Welcome to the server!
+f6=begin (sv_map_next)
+```
+
+### Complex Scripts
+
+Combine multiple commands:
+
+```ini
+# Execute multiple commands in sequence
+alt_shift_4=begin (debug_camera_save) (debug_camera_load) || begin (camera_control 0)
+
+# Skip cutscene and restore HUD
+ctrl_alt_shift_3=begin (cinematic_stop) (camera_control 0) (show_hud 1)
+```
+
+## Complete Example
+
+Here's a complete hotkey configuration:
+
+```ini
+[hotkey]
+enabled=1
+
+# Function keys - Common actions
+f1=chimera_spectate_previous
+f2=chimera_spectate_next
+f3=chimera_show_fps 1
+f4=chimera_show_fps 0
+f5=chimera_send_chat_message 0 taxi
+f9=chimera_interpolate 1
+f10=chimera_interpolate 0
+
+# Alt+Shift - Spectator controls
+alt_shift_1=chimera_spectate_previous
+alt_shift_2=chimera_spectate_next
+alt_shift_3=chimera_spectate 0
+alt_shift_4=begin (debug_camera_save) (debug_camera_load) || begin (camera_control 0)
+
+# Alt - Bookmarks (quick connect to favorite servers)
+alt_1=chimera_bookmark_connect 1
+alt_2=chimera_bookmark_connect 2
+alt_3=chimera_bookmark_connect 3
+alt_4=chimera_bookmark_connect 4
+alt_5=chimera_bookmark_connect 5
+alt_0=chimera_bookmark_list
+
+# Ctrl - History (reconnect to recent servers)
+ctrl_1=chimera_history_connect 1
+ctrl_2=chimera_history_connect 2
+ctrl_3=chimera_history_connect 3
+ctrl_0=chimera_history_list
+
+# Ctrl+Alt+Shift - Advanced
+ctrl_alt_shift_1=chimera_block_extra_weapon
+ctrl_alt_shift_2=chimera_unblock_all_extra_weapons
+ctrl_alt_shift_3=begin (cinematic_stop) (camera_control 0) (show_hud 1)
+```
+
+## Tips
+
+<Tip>
+**Leave hotkeys empty** to disable them. An empty value means the key does nothing:
+
+```ini
+f1=
+f2=
+```
+</Tip>
+
+<Tip>
+**Use numpad versions** if you want different behavior for number row vs numpad:
+
+```ini
+alt_1=chimera_bookmark_connect 1
+alt_num_1=chimera_send_chat_message 0 Quick message
+```
+</Tip>
+
+<Warning>
+The example `alt_f4=chimera_aimbot 1` in the default ini is commented out. **Do not enable cheats on multiplayer servers** - you will be banned.
+</Warning>

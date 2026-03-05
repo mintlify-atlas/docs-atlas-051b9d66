@@ -1,80 +1,267 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Get up and running with Chimera in 5 minutes
+icon: rocket
 ---
 
-## Get started in three steps
+This guide will get you from zero to a fully configured Chimera installation in just a few minutes.
 
-Get your documentation site running locally and make your first customization.
+## Prerequisites
 
-### Step 1: Set up your local environment
+Before you begin, ensure you have:
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+- Halo: Combat Evolved PC (version 1.10) or Halo Custom Edition
+- Administrator access to install files (if Halo is in Program Files)
+- A backup of important files (we'll guide you through this)
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  This guide assumes you have Halo PC or Custom Edition already installed. If not, install it first before continuing.
 </Note>
+
+## Quick Setup
+
+<Steps>
+  <Step title="Download Chimera">
+    Go to the [Chimera releases page](https://github.com/SnowyMouse/chimera/releases) and download the latest release. You need:
+    
+    - `strings.dll` - The main Chimera mod file
+    - `chimera.ini` - Configuration file
+    - `fonts/` folder - Font files for custom text rendering
+    
+    <Tip>
+      Download the latest release, not pre-releases, for the most stable experience.
+    </Tip>
+  </Step>
+
+  <Step title="Back up your original strings.dll">
+    Navigate to your Halo installation folder and rename the existing `strings.dll` to `strings-old.dll`:
+    
+    ```bash
+    # Example path:
+    C:\Program Files (x86)\Microsoft Games\Halo\strings.dll
+    # Rename to:
+    C:\Program Files (x86)\Microsoft Games\Halo\strings-old.dll
+    ```
+    
+    <Warning>
+      Do NOT skip this step! You need the original file to uninstall Chimera later.
+    </Warning>
+  </Step>
+
+  <Step title="Copy Chimera files">
+    Copy the downloaded files to your Halo installation folder:
+    
+    - `strings.dll` → Halo main folder
+    - `chimera.ini` → Halo main folder
+    - `fonts/` → Halo main folder
+    
+    Your folder structure should look like:
+    
+    ```
+    C:\Program Files (x86)\Microsoft Games\Halo\
+    ├── halo.exe
+    ├── strings.dll          ← Chimera
+    ├── strings-old.dll      ← Your backup
+    ├── chimera.ini
+    └── fonts/
+        ├── ...font files...
+    ```
+    
+    <Warning>
+      Install to the **main game folder**, NOT the `controls` subfolder!
+    </Warning>
+  </Step>
+
+  <Step title="Launch Halo">
+    Start Halo normally. Chimera loads automatically - you don't need to do anything special.
+    
+    To verify Chimera is working:
+    1. Press the tilde key (`~`) to open the console
+    2. Type `chimera` and press Enter
+    3. You should see Chimera version information
+  </Step>
+
+  <Step title="Configure essentials">
+    Try these essential commands to get the best experience:
+    
+    ```bash
+    # Open console with ~ (tilde) key, then type:
+    chimera_block_all_bullshit        # Disables annoying UI elements
+    chimera_fov 90v                   # Set FOV to 90 degrees (vertical)
+    chimera_show_fps true             # Display FPS counter
+    chimera_widescreen_fix 1          # Fix HUD for widescreen
+    ```
+    
+    <Accordion title="What does block_all_bullshit do?">
+      This convenient command runs multiple commands at once:
+      - `chimera_block_gametype_indicator 1` - Removes gametype indicator
+      - `chimera_block_gametype_rules 1` - Skips gametype rules screen
+      - `chimera_block_hold_f1 1` - Removes "Hold F1" message
+      - `chimera_block_loading_screen 1` - Removes loading screen flash
+      - `chimera_block_mouse_acceleration 1` - Disables mouse acceleration
+    </Accordion>
+  </Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configure chimera.ini" icon="gear" href="/configuration/ini-settings">
+    Customize Chimera's behavior through the configuration file
+  </Card>
+  <Card title="Explore Commands" icon="terminal" href="/commands/overview">
+    Learn about all available Chimera commands
+  </Card>
+  <Card title="Enable Features" icon="sparkles" href="/features/overview">
+    Discover Chimera's extensive feature set
+  </Card>
+  <Card title="Troubleshooting" icon="wrench" href="/troubleshooting">
+    Having issues? Check the troubleshooting guide
+  </Card>
+</CardGroup>
+
+## Essential Configuration
+
+### Optimal Defaults
+
+For the best out-of-the-box experience, enable optimal defaults in `chimera.ini`:
+
+```ini
+[halo]
+optimal_defaults=1
+```
+
+This automatically enables:
+- `chimera_af true` - Anisotropic filtering
+- `chimera_aim_assist true` - Controller aim assist
+- `chimera_block_loading_screen true` - No loading screen flash
+- `chimera_block_mouse_acceleration true` - Raw mouse input
+- `chimera_diagonals 0.75` - Better analog stick diagonals
+- `chimera_fov auto` - Automatic FOV scaling
+- `chimera_throttle_fps 300` - Cap FPS to 300
+- `chimera_uncap_cinematic true` - Unlock 30 FPS cap in cutscenes
+- `chimera_model_detail true` - Force highest LOD models
+
+### Video Settings
+
+For better visuals, add to `chimera.ini`:
+
+```ini
+[video_mode]
+enabled=1
+width=1920
+height=1080
+refresh_rate=144
+vsync=0
+windowed=0
+af=16
+```
+
+### Console Access
+
+Enable the console for easy command access:
+
+```ini
+[halo]
+console=1
+```
+
+## Common First Commands
+
+Once installed, open the console (`~` key) and try these:
+
+<CodeGroup>
+```bash Visual
+chimera_fov 90v                    # Field of view
+chimera_widescreen_fix 1           # Widescreen HUD
+chimera_show_fps true              # FPS counter
+chimera_af true                    # Anisotropic filtering
+```
+
+```bash Input
+chimera_block_mouse_acceleration true    # Raw mouse input
+chimera_mouse_sensitivity 2 1            # Custom sensitivity
+chimera_deadzones 0.15                   # Controller deadzone
+chimera_diagonals 0.75                   # Analog stick diagonals
+```
+
+```bash Performance
+chimera_throttle_fps 144           # Cap FPS
+chimera_uncap_cinematic true       # Unlock cutscene FPS
+chimera_model_detail true          # Force max detail
+```
+
+```bash Quality of Life
+chimera_block_all_bullshit         # Disable annoyances
+chimera_block_letterbox true       # No letterbox in cutscenes
+chimera_devmode true               # Enable dev commands
+```
+</CodeGroup>
+
+## Verify Installation
+
+To confirm everything is working correctly:
+
+<Accordion title="Check Chimera is loaded">
+1. Open console with `~` key
+2. Type `chimera` and press Enter
+3. You should see version information and build date
+</Accordion>
+
+<Accordion title="Test interpolation">
+1. Start a game (any map)
+2. You should immediately notice smoother movement beyond 30 FPS
+3. The difference is most noticeable on objects and vehicles
+</Accordion>
+
+<Accordion title="Verify commands work">
+1. Type `chimera_show_fps true` in console
+2. You should see an FPS counter appear in the top-right
+3. Try `chimera_fov 90v` - your FOV should change immediately
+</Accordion>
+
+## Quick Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Chimera doesn't load">
+    - Verify files are in the **main** Halo folder, not `controls`
+    - Make sure you replaced the correct `strings.dll`
+    - Check file permissions if Halo is in Program Files
+    - Try running Halo as administrator
+  </Accordion>
+
+  <Accordion title="Console doesn't open">
+    - Enable it in chimera.ini: `console=1` under `[halo]`
+    - Restart Halo after changing chimera.ini
+    - Try the default key: tilde (`~`) or backtick (`)
+  </Accordion>
+
+  <Accordion title="Commands don't persist">
+    - Commands entered in console only last until you quit
+    - Add persistent commands to chimera.ini or use hotkeys
+    - Alternatively, create an init.txt file and load it with `exec=path\to\init.txt`
+  </Accordion>
+
+  <Accordion title="Fonts don't work">
+    - Install DirectX 9 runtime: https://www.microsoft.com/en-us/download/details.aspx?id=35
+    - Verify the `fonts` folder is in your Halo directory
+    - Check folder permissions
+  </Accordion>
+</AccordionGroup>
+
+<Info>
+  Need more help? Check the [FAQ](/faq) or [Troubleshooting](/troubleshooting) pages for detailed solutions.
+</Info>
+
+## What's Next?
+
+Now that Chimera is installed:
+
+1. **Customize your experience** - Edit `chimera.ini` to configure video, controller, and chat settings
+2. **Learn the commands** - Browse the [command reference](/commands/overview) to unlock Chimera's full potential
+3. **Try Lua scripting** - Create custom scripts for automation and extended features
+4. **Join the community** - Visit the [GitHub repository](https://github.com/SnowyMouse/chimera) for updates and support
+
+<Card title="Ready to dive deeper?" icon="book" href="/features/overview">
+  Explore all of Chimera's features →
+</Card>

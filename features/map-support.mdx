@@ -1,0 +1,466 @@
+---
+title: Map Support
+description: Custom Edition maps on retail, compressed maps, and automatic downloading
+icon: map
+---
+
+Chimera provides extensive map support features, including running Custom Edition maps on retail Halo PC, compressed map support, and automatic map downloading.
+
+## Custom Edition Maps on Retail
+
+Chimera enables **Custom Edition map support** on the base Halo PC (retail) installation.
+
+### Why This Matters
+
+<Info>
+**Problem**: Halo PC (retail) and Halo Custom Edition use different resource maps, making them incompatible.
+
+**Solution**: Chimera allows retail to load Custom Edition maps by using CE's resource maps.
+</Info>
+
+### Setup Instructions
+
+<Steps>
+  <Step title="Obtain Custom Edition Resource Maps">
+    Get these files from the Halo Custom Edition installation:
+    - `bitmaps.map`
+    - `loc.map`
+    - `sounds.map`
+  </Step>
+  
+  <Step title="Rename the Files">
+    Add `custom_` prefix to each file:
+    - `bitmaps.map` → `custom_bitmaps.map`
+    - `loc.map` → `custom_loc.map`
+    - `sounds.map` → `custom_sounds.map`
+  </Step>
+  
+  <Step title="Copy to Maps Folder">
+    Place the renamed files in your Halo PC `maps` folder.
+  </Step>
+  
+  <Step title="Verify">
+    Chimera will automatically detect all three files and enable Custom Edition map support.
+  </Step>
+</Steps>
+
+<Warning>
+**DO NOT** overwrite your original `bitmaps.map` or `sounds.map` files. You need these to load Halo PC maps.
+
+Chimera will **not** enable this feature if **any** of the three files are missing.
+</Warning>
+
+### Extracting Without Installing
+
+You can extract resource maps without installing Custom Edition:
+
+<Tabs>
+  <Tab title="Windows">
+    Use [7-Zip](https://www.7-zip.org/download.html) to extract files from the Custom Edition installer:
+    
+    1. Right-click the installer
+    2. Select "7-Zip" → "Open archive"
+    3. Extract the three resource map files
+    4. Rename them with `custom_` prefix
+  </Tab>
+  
+  <Tab title="Linux">
+    Use [p7zip](https://wiki.archlinux.org/index.php/P7zip):
+    
+    ```bash
+    7z x HaloCESetup.exe
+    mv bitmaps.map custom_bitmaps.map
+    mv loc.map custom_loc.map
+    mv sounds.map custom_sounds.map
+    ```
+  </Tab>
+</Tabs>
+
+## Compressed Maps
+
+Chimera supports maps compressed with the **zstd compression algorithm**.
+
+### Benefits
+
+<CardGroup cols={2}>
+  <Card title="Smaller File Sizes" icon="compress">
+    Drastically reduce map file sizes with blazingly fast zstd compression
+  </Card>
+  
+  <Card title="Fast Decompression" icon="bolt">
+    zstd is extremely fast - decompression happens nearly instantly
+  </Card>
+  
+  <Card title="RAM or Disk" icon="memory">
+    Decompress directly to RAM or use temp files
+  </Card>
+  
+  <Card title="Transparent" icon="eye-slash">
+    Works automatically - no user intervention needed
+  </Card>
+</CardGroup>
+
+### How It Works
+
+```cpp
+// Chimera detects compressed maps automatically
+// Decompression happens transparently on load
+```
+
+**Decompression behavior**:
+
+<Tabs>
+  <Tab title="Maps in RAM Enabled">
+    If the `enable_map_memory_buffer` setting is enabled:
+    
+    ```ini
+    [memory]
+    enable_map_memory_buffer=1
+    map_size=1024  ; Buffer size in MiB
+    ```
+    
+    Compressed maps decompress **directly into RAM** - no temp files.
+  </Tab>
+  
+  <Tab title="Maps in RAM Disabled">
+    Without the memory buffer:
+    
+    Chimera creates **temporary files** in the Chimera folder for decompressed maps.
+  </Tab>
+</Tabs>
+
+**Location**: `src/chimera/map_loading/compression.cpp`
+
+### Compression Tool
+
+Use the `chimera-compress` tool to compress maps:
+
+```bash
+chimera-compress input.map output.map
+```
+
+<Note>
+The compression tool is a separate utility available in the Chimera repository.
+</Note>
+
+### Technical Details
+
+```cpp
+// Supported compressed engine types
+CACHE_FILE_CUSTOM_EDITION_COMPRESSED
+CACHE_FILE_RETAIL_COMPRESSED  
+CACHE_FILE_DEMO_COMPRESSED
+```
+
+Chimera:
+1. Detects compressed map header
+2. Validates compression format
+3. Decompresses using zstd
+4. Converts header to uncompressed format
+5. Loads map normally
+
+## Map Downloading
+
+Chimera **automatically downloads missing maps** when joining servers.
+
+### How It Works
+
+<Steps>
+  <Step title="Join Server">
+    You join a server hosting a map you don't have.
+  </Step>
+  
+  <Step title="Automatic Detection">
+    Chimera detects the missing map.
+  </Step>
+  
+  <Step title="Download">
+    Map is downloaded from the configured repository (default: HAC2 Map repo).
+  </Step>
+  
+  <Step title="Storage">
+    Map is saved to the download directory and you join the game.
+  </Step>
+</Steps>
+
+### Configuration
+
+```ini
+[memory]
+
+; Download directory (default: <profiles>/chimera/maps)
+download_map_path=C:\Users\YourName\Documents\My Games\Halo\chimera\maps
+
+; Font for download progress
+download_font=small
+
+; URL template for downloading
+download_template=http://maps.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}
+
+; Allow downloading retail maps (UNSAFE - see warning below)
+download_retail_maps=0
+```
+
+### URL Template Variables
+
+The `download_template` supports these replacements:
+
+| Variable | Replaced With |
+|----------|---------------|
+| `{map}` | Map name |
+| `{game}` | Game type ("halor" = PC, "halom" = CE, "halod" = trial) |
+| `{server}` | Current server IP |
+| `{password}` | Server password |
+| `{mirror<x,y,...>}` | Try each mirror until one works |
+
+**Example with mirrors**:
+
+```ini
+download_template=http://{mirror=mirror1.com,mirror2.com,mirror3.com}/maps/{map}.map
+```
+
+### Retail Map Downloads
+
+<Warning>
+**Downloading retail maps is OFF by default** due to compatibility risks.
+
+Enable only if you have:
+- English copy of retail Halo PC
+- Matching `bitmaps.map` and `sounds.map` files
+
+Incompatible maps will result in **corrupt assets** and **extremely loud sounds ("earrape")**.
+</Warning>
+
+```ini
+; Only enable if you know what you're doing
+download_retail_maps=1
+```
+
+### Default Repository
+
+By default, Chimera uses the [HAC2 Map Repository](http://maps.halonet.net/maplist.php):
+
+```
+http://maps.halonet.net/halonet/locator.php?format=inv&map={map}&type={game}
+```
+
+## Maps in RAM
+
+Load maps directly into RAM for better performance.
+
+### Benefits
+
+<CardGroup cols={2}>
+  <Card title="Faster Loading" icon="rocket">
+    Eliminate disk I/O bottlenecks
+  </Card>
+  
+  <Card title="Reduced Stuttering" icon="waveform">
+    No disk access during gameplay
+  </Card>
+  
+  <Card title="Better for SSDs" icon="hard-drive">
+    Reduce SSD wear from repeated map loads
+  </Card>
+  
+  <Card title="Compressed Maps" icon="compress">
+    Decompress directly to RAM
+  </Card>
+</CardGroup>
+
+### Requirements
+
+<Warning>
+You need an **LAA-patched executable** to use maps in RAM.
+
+LAA (Large Address Aware) allows 32-bit applications to use more than 2 GB of RAM.
+</Warning>
+
+### Configuration
+
+```ini
+[memory]
+
+; Enable loading maps into RAM
+enable_map_memory_buffer=1
+
+; Buffer size in MiB (for UI map + one non-UI map)
+map_size=1024
+
+; Show decompression benchmark
+benchmark=1
+```
+
+**Recommended size**: `1024` MiB (1 GB) is sufficient for most maps.
+
+### Benchmark Display
+
+Enable `benchmark=1` to see load times:
+
+```
+Map loaded in 123.45 ms
+Decompressed 45.2 MB in 67.89 ms
+```
+
+## Map Loading Optimizations
+
+### Fast Loading
+
+Chimera drastically improves map loading times.
+
+<AccordionGroup>
+  <Accordion title="The Problem">
+    Halo Custom Edition CRC32s **every map** on startup:
+    
+    - Small maps folder: Minor delay
+    - Large maps folder: **Minutes of startup time**
+    
+    Some mods cache CRC32s, but this defeats the purpose (can join with mismatched maps).
+  </Accordion>
+  
+  <Accordion title="The Solution">
+    Chimera CRC32s maps **when you load them**, not at startup:
+    
+    - **Zero startup delay** regardless of maps folder size
+    - **Maintains server validation** (proper CRC32 checking)
+    - **True fix**, not a workaround
+  </Accordion>
+</AccordionGroup>
+
+**Location**: `src/chimera/map_loading/fast_load.cpp`
+
+### 128 MiB Map Leak Fix
+
+Fixes file descriptor leaks with large maps.
+
+**The Bug**:
+
+```cpp
+if (map_size > 128 MiB) {
+    // Opens file multiple times
+    // Only closes once
+    // File descriptors leak
+    // Eventually: out of file handles
+}
+```
+
+**The Fix**: Removes the problematic file size check.
+
+**Location**: `src/chimera/fix/leak_descriptors.cpp`
+
+## Campaign in Custom Edition
+
+Chimera re-enables the campaign menu in Custom Edition.
+
+<Info>
+**Feature**: If all campaign maps are available in the maps folder, Chimera will enable the "Campaign" menu option.
+
+**Just like retail**: This restores functionality removed in Custom Edition.
+</Info>
+
+**Required maps**:
+- a10.map
+- a30.map  
+- a50.map
+- b30.map
+- b40.map
+- c10.map
+- c20.map
+- c40.map
+- d20.map
+- d40.map
+
+## Map Hacks and Compatibility
+
+Chimera includes a map compatibility system for legacy maps.
+
+### Compatibility List
+
+Enable/disable the compatibility list:
+
+```ini
+[maps]
+map_compatibility_list=1  ; Default: enabled
+```
+
+**Purpose**: Support legacy maps that depend on:
+- Gearbox renderer regressions
+- Legacy Chimera hacks
+- Specific rendering quirks
+
+**Location**: `src/chimera/fix/map_hacks/map_hacks.cpp`
+
+<Note>
+Most modern maps don't need compatibility hacks. This is mainly for very old Custom Edition maps.
+</Note>
+
+## CRC32 Handling
+
+Chimera properly validates map CRC32 checksums.
+
+### Why CRC32 Matters
+
+<AccordionGroup>
+  <Accordion title="Server Validation">
+    Servers check CRC32 to ensure all players have the same map:
+    
+    - ~99.999999976% certainty of identical maps
+    - Prevents crashes from mismatched content
+    - Ensures fair gameplay
+  </Accordion>
+  
+  <Accordion title="Modified Maps">
+    Using a modified map will cause CRC32 mismatch:
+    
+    ```
+    Error: CRC32 does not match server
+    ```
+    
+    This is **intentional** - prevents crashes.
+  </Accordion>
+  
+  <Accordion title="Forging CRC32">
+    If you want to use a modified Custom Edition map on a Custom Edition server:
+    
+    1. Modify your map
+    2. Use a tool to forge the CRC32 to match the original
+    3. Join server
+    
+    <Warning>
+    Only do this if your modifications won't cause crashes. You've been warned.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+## Related Configuration
+
+<CardGroup cols={2}>
+  <Card title="chimera.ini" icon="gear" href="/configuration/chimera-ini">
+    Main configuration file
+  </Card>
+  
+  <Card title="Memory Settings" icon="memory" href="/configuration/memory">
+    Maps in RAM configuration
+  </Card>
+  
+  <Card title="Map Path" icon="folder" href="/configuration/halo-settings">
+    Custom map directories
+  </Card>
+  
+  <Card title="Commands" icon="terminal" href="/commands/overview">
+    Map-related commands
+  </Card>
+</CardGroup>
+
+## Technical Implementation
+
+Key map loading code locations:
+
+```
+src/chimera/map_loading/
+├── compression.cpp       # Compressed map support
+├── fast_load.cpp        # Fast CRC32 loading
+├── leak_descriptors.cpp # 128 MiB leak fix
+├── laa.cpp              # Large address aware
+└── map_loading.cpp      # Core loading system
+```

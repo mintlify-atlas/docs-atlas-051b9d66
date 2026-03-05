@@ -1,0 +1,263 @@
+---
+title: Installation
+description: Step-by-step guide to installing Chimera for Halo Combat Evolved PC
+---
+
+This guide will walk you through installing Chimera on your Halo: Combat Evolved installation.
+
+<Warning>
+**Before you begin:** Make sure your game is updated to version 1.10 (unless you're using the trial version).
+</Warning>
+
+## Installation Steps
+
+<Steps>
+  <Step title="Update Halo to Version 1.10">
+    If you're using Halo PC (not the trial), ensure your game is updated to version 1.10.
+    
+    <Tip>
+    You can check your version by looking at the bottom right of the main menu screen.
+    </Tip>
+    
+    Skip this step if you're using Halo Trial or Halo Custom Edition.
+  </Step>
+
+  <Step title="Back Up Your Original strings.dll">
+    Navigate to your Halo game folder and locate `strings.dll`.
+    
+    **Backup method:**
+    - Rename `strings.dll` to `strings-old.dll`
+    - OR copy it to a safe location
+    
+    <Warning>
+    **Critical:** Do NOT skip this step! You'll need the original file to uninstall Chimera or restore vanilla Halo.
+    </Warning>
+  </Step>
+
+  <Step title="Download Chimera">
+    Download the latest Chimera release from the official repository:
+    
+    [github.com/SnowyMouse/chimera/releases](https://github.com/SnowyMouse/chimera/releases)
+    
+    Extract the downloaded archive. You should have:
+    - `strings.dll` (Chimera's main file)
+    - `chimera.ini` (configuration file)
+    - `fonts/` folder (optional custom fonts)
+  </Step>
+
+  <Step title="Copy Files to Game Folder">
+    Copy these files to your **main game folder**:
+    - `strings.dll`
+    - `chimera.ini`
+    - `fonts/` folder (optional)
+    
+    <Warning>
+    **Important:** Files go in the **main game folder**, NOT the `controls` folder. 
+    
+    Typical locations:
+    - `C:\Program Files (x86)\Microsoft Games\Halo\`
+    - `C:\Program Files\Halo Custom Edition\`
+    </Warning>
+  </Step>
+
+  <Step title="Optional: Create Mods Folder">
+    If you want to load custom DLL mods:
+    
+    ```bash
+    mkdir mods
+    ```
+    
+    Place any compatible DLL mods in this folder.
+    
+    <Note>
+    HAC2 and Open Sauce are **not** compatible with Chimera due to conflicts.
+    </Note>
+  </Step>
+
+  <Step title="Verify Installation">
+    Launch Halo and press the tilde key (`~`) to open the console.
+    
+    Type:
+    ```bash
+    chimera
+    ```
+    
+    You should see Chimera version information and available commands.
+    
+    <Tip>
+    If the console doesn't open, make sure `console=1` is set in `chimera.ini` under the `[halo]` section.
+    </Tip>
+  </Step>
+</Steps>
+
+## Directory Structure
+
+After installation, your game folder should look like this:
+
+```bash
+Halo/
+├── strings.dll          # Chimera (replaces original)
+├── strings-old.dll      # Your backup
+├── chimera.ini          # Configuration file
+├── fonts/               # Optional custom fonts
+│   ├── hack-license.md
+│   ├── interstate-license.md
+│   └── [font files]
+├── mods/                # Optional DLL mods folder
+├── halo.exe
+└── [other game files]
+```
+
+## File Locations
+
+### Configuration Files
+
+- `chimera.ini` - Main configuration (in game folder)
+- `chimera/preferences.txt` - Command preferences (created in profiles folder)
+- `chimera/maps/` - Downloaded maps (in profiles folder)
+
+### Profiles Folder Locations
+
+**Default locations:**
+- Windows: `C:\Users\[YourName]\Documents\My Games\Halo\`
+- Custom Edition: `C:\Users\[YourName]\Documents\My Games\Halo CE\`
+
+<Info>
+You can change the profiles path in `chimera.ini` using the `path` setting under `[halo]`.
+</Info>
+
+## Backing Up Original Files
+
+<Accordion title="Why Back Up?">
+Backing up your original `strings.dll` allows you to:
+
+- Easily uninstall Chimera
+- Restore vanilla Halo functionality
+- Switch between modded and vanilla versions
+- Troubleshoot installation issues
+</Accordion>
+
+**Recommended backup:**
+
+```bash
+Halo/
+├── strings.dll          # Chimera version
+├── strings-old.dll      # Original backup
+└── strings-chimera.dll  # Optional: Keep a Chimera copy
+```
+
+## Common Installation Issues
+
+### Console Won't Open
+
+**Solution:** Enable console in `chimera.ini`
+
+```ini
+[halo]
+console=1
+```
+
+### Game Crashes on Startup
+
+<Accordion title="Possible Causes and Solutions">
+
+**Wrong file location:**
+- Ensure files are in the main game folder, NOT `controls/`
+
+**Incompatible mods:**
+- Remove HAC2, Open Sauce, or other conflicting mods
+- Try removing the `mods/` folder temporarily
+
+**Windows XP:**
+- Download the dedicated Windows XP release of Chimera
+
+**Corrupted download:**
+- Re-download Chimera from the official repository
+- Verify file integrity
+</Accordion>
+
+### Custom Fonts Not Working
+
+**Solution:** Install DirectX 9 runtime libraries
+
+1. Download the DirectX End-User Runtime from Microsoft:
+   [microsoft.com/en-us/download/details.aspx?id=35](https://www.microsoft.com/en-us/download/details.aspx?id=35)
+2. Run the installer
+3. Restart Halo
+
+### Permission Denied Errors
+
+**Solution:** Grant write permissions
+
+<CodeGroup>
+```powershell Windows (Administrator)
+# Run as administrator
+icacls "C:\Program Files (x86)\Microsoft Games\Halo" /grant Users:F
+```
+
+```bash Alternative
+# Or install Halo outside Program Files
+# Example: C:\Games\Halo\
+```
+</CodeGroup>
+
+<Tip>
+Installing Halo outside of `Program Files` avoids permission issues and is recommended for modding.
+</Tip>
+
+### Maps Don't Download Automatically
+
+**Check `chimera.ini` settings:**
+
+```ini
+[memory]
+download_map_path=auto  # Or specify custom path
+download_template=http://maps.halonet.net/halo/$map/$map.map
+```
+
+<Warning>
+`download_retail_maps` should remain disabled (commented out) for safety. Only enable if you know what you're doing.
+</Warning>
+
+## Uninstalling Chimera
+
+To uninstall Chimera and restore vanilla Halo:
+
+<Steps>
+  <Step title="Delete Chimera Files">
+    Remove these files from your game folder:
+    - `strings.dll`
+    - `chimera.ini` (optional)
+    - `fonts/` folder (optional)
+    - `mods/` folder (optional)
+  </Step>
+
+  <Step title="Restore Original strings.dll">
+    Rename your backup:
+    ```bash
+    strings-old.dll → strings.dll
+    ```
+  </Step>
+
+  <Step title="Clean Up Profile Folder (Optional)">
+    Remove Chimera data from your profiles folder:
+    - `chimera/` folder
+    - `preferences.txt`
+  </Step>
+</Steps>
+
+Your game will now run in vanilla mode.
+
+## Verification Checklist
+
+After installation, verify everything works:
+
+- [ ] Console opens with `~` key
+- [ ] `chimera` command shows version info
+- [ ] Game launches without crashes
+- [ ] FPS counter works (`chimera_show_fps true`)
+- [ ] Custom fonts display correctly (if installed)
+
+## What's Next?
+
+Now that Chimera is installed, check out the [Quick Start Guide](/quickstart) to learn essential commands and configuration.

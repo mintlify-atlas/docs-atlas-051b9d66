@@ -1,0 +1,426 @@
+---
+title: Visual Enhancements
+description: Shader fixes, rendering improvements, and visual quality enhancements
+icon: eye
+---
+
+Chimera provides extensive visual enhancements to restore Xbox-accurate rendering and improve visual quality beyond what Gearbox shipped.
+
+## Shader Restoration
+
+Gearbox introduced numerous shader regressions when porting Halo to PC. Chimera restores Xbox-accurate rendering.
+
+### Shader Transparent Generic
+
+One of the most significant improvements - restoring a **completely missing shader type**.
+
+<Warning>
+**Gearbox removed** the `shader_transparent_generic` shader type from Halo PC entirely, breaking many visual effects.
+</Warning>
+
+**What Chimera Does**:
+
+```cpp
+// Chimera re-implements shader_transparent_generic using Direct3D 9
+// Supports all original Xbox shader features:
+// - Multi-stage blending
+// - Complex texture operations  
+// - Fog integration
+// - Proper alpha blending
+```
+
+**Location**: `src/chimera/rasterizer/shader_transparent_generic.cpp`
+
+**Impact**: 
+- Transparent surfaces render correctly
+- Glass effects work properly
+- Environmental effects display as intended
+
+### Environmental Bump Mapping
+
+Fixes bump mapping on environmental surfaces.
+
+**Command**: `chimera_force_alternate_bump_attenuation`
+
+```bash
+chimera_force_alternate_bump_attenuation true
+```
+
+<Tabs>
+  <Tab title="Default Behavior">
+    Only applies alternate bump attenuation to shader_environment tags with the appropriate flag set.
+  </Tab>
+  
+  <Tab title="Forced (Command)">
+    Forces alternate bump attenuation method for all environmental bump mapping.
+  </Tab>
+</Tabs>
+
+### Specular Lighting
+
+Restores proper specular highlights on surfaces.
+
+**Location**: `src/chimera/fix/specular_memes.cpp`
+
+### Fog Rendering
+
+Fixes fog not rendering correctly in campaign levels.
+
+<Info>
+**Example**: Assault on the Control Room's atmospheric sky fog now works as intended.
+</Info>
+
+**Impact**:
+- Proper atmospheric effects
+- Distance fog works correctly
+- Environmental ambiance restored
+
+### Water and Weather
+
+Fixes for water and weather effects.
+
+**Improvements**:
+- Water shader rendering
+- Weather particle effects
+- Rain and snow properly rendered
+
+**Locations**:
+- `src/chimera/fix/water_fix.cpp`
+- `src/chimera/fix/weather_fix.cpp`
+
+## Resolution-Independent Rendering
+
+Many visual elements in Halo PC were hardcoded to specific resolutions. Chimera makes them scale properly.
+
+### Sun and Lens Flares
+
+**Problem**: Lens flares drawn at set pixel count regardless of resolution.
+
+**Solution**: Scale by 768p for consistency across resolutions.
+
+```cpp
+// Before: 100 pixels (tiny at 4K)
+// After: Scales proportionally to 768p baseline
+```
+
+### Zoom Blur
+
+Improved zoom blur quality and scaling.
+
+**Enhancements**:
+- Blur radius scales by 480p (not hardcoded)
+- Increased effect resolution
+- Better quality at high resolutions
+- Fixes blur looking "bad" at high res
+
+**Disable it**:
+```bash
+chimera_block_zoom_blur true
+```
+
+### HUD Elements
+
+HUD numbers and elements now scale correctly.
+
+**Fixed**:
+- HUD numbers no longer oversized at high resolution
+- Proper scaling for modified high-res HUD elements
+
+## Limit Increases
+
+Chimera increases rendering and game limits for modern content.
+
+<AccordionGroup>
+  <Accordion title="BSP Polygon Limit">
+    **Original**: ~6,000-10,000 polygons
+    
+    **Chimera**: **32,767 polygons**
+    
+    ```cpp
+    #define BSP_POLY_LIMIT 0x7FFE  // 32,766
+    ```
+    
+    Allows complex maps without polygon limit issues.
+  </Accordion>
+  
+  <Accordion title="Visible Object Limit">
+    **Original**: 256 objects
+    
+    **Chimera**: **1,024 objects**
+    
+    Maps with many objects no longer break rendering.
+  </Accordion>
+  
+  <Accordion title="Draw Distance">
+    **Original**: ~1,500 world units
+    
+    **Chimera**: **2,250 world units (~6.86 km)**
+    
+    See further across large maps.
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+**Performance Impact**: None unless you play maps that exceed the original limits. The increases are capacity, not forced usage.
+</Note>
+
+**Location**: `src/chimera/fix/extend_limits.hpp`
+
+## Anisotropic Filtering
+
+Enhanced anisotropic filtering beyond base game capabilities.
+
+**Features**:
+- Applies to **individual objects**, not just level geometry
+- Configurable filtering level
+- Higher quality than Halo's built-in filtering
+
+**Configuration**:
+
+<CodeGroup>
+```ini chimera.ini
+[video_mode]
+af_level=16  ; Chimera default (base game: 8)
+```
+
+```bash Console Command
+chimera_af true   ; Enable enhanced AF
+chimera_af false  ; Disable
+```
+</CodeGroup>
+
+**Location**: `src/chimera/fix/af.cpp`
+
+## Model Detail
+
+Force highest LOD (Level of Detail) for all models.
+
+**Command**: `chimera_model_detail`
+
+```bash
+chimera_model_detail true  ; Always use highest quality models
+```
+
+<Info>
+**Exception**: Cryo tube model always scales by 480p to prevent the "4K headless chief" glitch.
+</Info>
+
+**Benefits**:
+- Highest quality models at all distances
+- Consistent visual quality
+- Better for screenshots/videos
+
+**Trade-off**: Slightly higher GPU usage on very old hardware.
+
+## Decal Improvements
+
+### Z-fighting Reduction
+
+Reduces flickering between decals and level geometry.
+
+**The Problem**:
+```cpp
+// Floating point precision loss at distance from map center
+// Causes Z-fighting (flickering surfaces)
+```
+
+**The Solution**: Chimera adjusts depth bias for decals to minimize fighting.
+
+### Floor Decal Fix
+
+Fixes floor decals rendering incorrectly.
+
+**Location**: `src/chimera/fix/floor_decal_memery.cpp`
+
+## Screen Effects
+
+### Camera Shake
+
+Frame-rate independent camera shake effects.
+
+**Fixed**: Explosions and impacts now shake camera correctly at any FPS.
+
+### Screen Effects
+
+Various screen effect fixes.
+
+**Location**: `src/chimera/fix/screen_effect_fix.cpp`
+
+## Color and Rendering
+
+### Blue 32-bit Color Fix
+
+Fixes 32-bit color rendering issues.
+
+**Location**: `src/chimera/fix/blue_32bit_color_fix.cpp`
+
+### Bitmap Format Support
+
+Expanded support for various bitmap formats.
+
+**Location**: `src/chimera/fix/bitmap_formats.cpp`
+
+**Improvements**:
+- Additional texture formats
+- Better compression support
+- Higher quality texture loading
+
+### Glass Rendering
+
+Improved glass shader rendering.
+
+**Location**: `src/chimera/fix/glass_fix.hpp`
+
+## Particle and Effect Improvements
+
+### Particle Interpolation
+
+Smooth particle movement at high frame rates.
+
+**Interpolated**:
+- Explosions
+- Smoke effects
+- Bullet tracers
+- Environmental particles
+
+### Contrails
+
+Fixed contrail rendering at high FPS.
+
+**Examples**:
+- Rocket trails
+- Vehicle exhaust  
+- Grenade trails
+
+### Effect Shaders
+
+Various effect shader fixes.
+
+**Location**: `src/chimera/fix/effect_shader_fix.hpp`
+
+## Vertex and Geometry Rendering
+
+### Vertex Shaders
+
+Improved vertex shader handling.
+
+**Location**: `src/chimera/rasterizer/rasterizer_vertex_shaders.cpp`
+
+### Transparent Geometry
+
+Enhanced transparent geometry rendering.
+
+**Location**: `src/chimera/rasterizer/rasterizer_transparent_geometry.cpp`
+
+**Improvements**:
+- Better sorting
+- Proper alpha blending
+- Reduced artifacts
+
+## Visual Quality Commands
+
+Many visual enhancements can be toggled via console commands:
+
+<CardGroup cols={2}>
+  <Card title="FOV" icon="expand" href="/commands/fov">
+    Adjust field of view
+  </Card>
+  
+  <Card title="Anisotropic Filtering" icon="image" href="/commands/af">
+    Enable enhanced AF
+  </Card>
+  
+  <Card title="Model Detail" icon="cube" href="/commands/model-detail">
+    Force highest LOD models
+  </Card>
+  
+  <Card title="Widescreen Fix" icon="tv" href="/commands/widescreen-fix">
+    Fix HUD for widescreen
+  </Card>
+  
+  <Card title="Block Zoom Blur" icon="eye-slash" href="/commands/block-zoom-blur">
+    Disable zoom blur effect
+  </Card>
+  
+  <Card title="Safe Zones" icon="crop" href="/commands/safe-zones">
+    Adjust HUD margins
+  </Card>
+</CardGroup>
+
+## Configuration Options
+
+### Video Mode Settings
+
+Extensive video configuration in `chimera.ini`:
+
+```ini
+[video_mode]
+enabled=1
+width=auto
+height=auto
+refresh_rate=0        ; Use system default
+vsync=0               ; Double buffer vsync
+windowed=0            ; Windowed mode
+borderless=0          ; Borderless fullscreen
+af_level=16           ; Anisotropic filtering level
+```
+
+### Optimal Defaults
+
+Enable all recommended visual enhancements:
+
+```ini
+[halo]
+optimal_defaults=1
+```
+
+This automatically enables:
+- `chimera_af true`
+- `chimera_model_detail true`
+- `chimera_fov auto`
+- `chimera_uncap_cinematic true`
+- And more!
+
+## Performance Considerations
+
+<Tabs>
+  <Tab title="Modern Hardware">
+    **Negligible impact** - All enhancements run smoothly on hardware from the last 10+ years.
+  </Tab>
+  
+  <Tab title="Older Hardware">
+    Consider disabling:
+    - `chimera_model_detail` (LOD forcing)
+    - High AF levels (reduce `af_level`)
+    - Font overrides (slight overhead)
+  </Tab>
+  
+  <Tab title="Benchmarking">
+    Use `chimera_show_fps` to monitor performance:
+    
+    ```bash
+    chimera_show_fps true
+    ```
+  </Tab>
+</Tabs>
+
+## Technical Implementation
+
+Key rendering code locations:
+
+```
+src/chimera/rasterizer/
+├── rasterizer.cpp                      # Core rasterizer
+├── rasterizer_vertex_shaders.cpp       # Vertex shaders
+├── rasterizer_transparent_geometry.cpp # Transparency
+└── shader_transparent_generic.cpp      # Generic shaders
+
+src/chimera/fix/
+├── af.cpp                    # Anisotropic filtering
+├── extend_limits.hpp         # Limit increases
+├── fov_fix.cpp              # FOV calculations
+├── model_detail.cpp         # LOD control
+├── sun_fix.cpp              # Lens flare scaling
+├── z_fighting.cpp           # Depth fighting
+└── bitmap_formats.cpp       # Texture formats
+```

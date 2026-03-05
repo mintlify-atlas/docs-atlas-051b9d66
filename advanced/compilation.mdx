@@ -1,0 +1,368 @@
+---
+title: Compiling from Source
+description: Build Chimera from source code on Windows and Linux
+---
+
+Chimera can be compiled from source using the MinGW-w64 toolchain. This guide covers building on both Windows and Linux.
+
+## Requirements
+
+### Common Requirements
+
+- **CMake** 3.22.0 or newer
+- **MinGW-w64** i686 (32-bit) toolchain
+- **Python 3** (required for build scripts)
+- **Git** (optional, for version information)
+
+### Platform-Specific
+
+**Windows:**
+- MSYS2 or standalone MinGW toolchain
+- Windows 7 or newer
+
+**Linux:**
+- MinGW cross-compiler
+- Wine 4.0 or newer (for testing)
+
+## Building on Windows
+
+There are two methods to build Chimera on Windows: using MSYS2 or using the standalone Winlibs toolchain.
+
+### Method 1: MSYS2 (Recommended)
+
+MSYS2 provides a complete build environment with package management.
+
+<Steps>
+  <Step title="Install MSYS2">
+    If you don't have MSYS2 installed:
+    
+    1. Download from [msys2.org](https://www.msys2.org/)
+    2. Run the installer
+    3. Follow the [installation instructions](https://www.msys2.org/wiki/MSYS2-installation/)
+    4. Update the package database: `pacman -Syu`
+  </Step>
+  
+  <Step title="Install build dependencies">
+    Open the MSYS2 terminal and install required packages:
+    
+    ```bash
+    pacman -S --needed base-devel mingw-w64-i686-toolchain mingw-w64-i686-cmake mingw-w64-i686-python git
+    ```
+  </Step>
+  
+  <Step title="Configure the build">
+    From the **MINGW32** subsystem (not MSYS2, not MINGW64):
+    
+    ```bash
+    cmake -S <path-to-chimera-source> -B build -DCMAKE_BUILD_TYPE=Release
+    ```
+    
+    Replace `<path-to-chimera-source>` with the actual path to Chimera's source directory.
+  </Step>
+  
+  <Step title="Build Chimera">
+    Compile the project:
+    
+    ```bash
+    cmake --build build
+    ```
+    
+    The compiled DLL will be in the `build` directory.
+  </Step>
+</Steps>
+
+### Method 2: Winlibs Standalone
+
+For a lighter-weight option without MSYS2:
+
+<Steps>
+  <Step title="Prepare the source directory">
+    Ensure Chimera's source is in a short path with no spaces:
+    
+    ```
+    C:\source\chimera
+    ```
+    
+    Paths with spaces can cause issues with the MinGW toolchain.
+  </Step>
+  
+  <Step title="Install Python">
+    Download and install [Python for Windows](https://www.python.org/downloads/windows/).
+    
+    Make sure to check "Add Python to PATH" during installation.
+  </Step>
+  
+  <Step title="Download MinGW toolchain">
+    1. Visit [winlibs.com](https://winlibs.com)
+    2. Download the latest **32-bit GCC MinGW-w64 MSVCRT** release
+    3. Extract the archive
+    4. Copy the `mingw32` directory to your Chimera source location: `C:\source\chimera\mingw32`
+  </Step>
+  
+  <Step title="Create build directory">
+    Create an empty `build` folder in the Chimera source directory:
+    
+    ```
+    C:\source\chimera\build
+    ```
+  </Step>
+  
+  <Step title="Create batch file for MinGW environment">
+    Create `mingw-console.bat` in the Chimera source directory with:
+    
+    ```batch
+    @echo off
+    set PATH=%~dp0mingw32\bin;%PATH%
+    cmd /k
+    ```
+    
+    This sets up the environment to use the MinGW toolchain.
+  </Step>
+  
+  <Step title="Configure and build">
+    Run `mingw-console.bat` to open a console with MinGW in the PATH.
+    
+    Then run:
+    
+    ```bash
+    cmake -S . -B build -G "Ninja" -DCMAKE_BUILD_TYPE=Release
+    cmake --build build
+    ```
+    
+    The compiled DLL will be in the `build` directory.
+  </Step>
+</Steps>
+
+<Info>
+  **Note:** Git for Windows is not required to compile Chimera, but it's needed for correct DLL version information. Download from [gitforwindows.org](https://gitforwindows.org/).
+</Info>
+
+### Windows XP Support
+
+To build with Windows XP support:
+
+```bash
+cmake -S <source> -B build -DCMAKE_BUILD_TYPE=Release -DCHIMERA_WINXP=ON
+cmake --build build
+```
+
+This targets Windows XP SP2 / Windows Server 2003 SP1 (instead of Windows 7).
+
+<Warning>
+  Windows XP support increases binary size due to additional compatibility code.
+</Warning>
+
+## Building on Linux
+
+Chimera can be cross-compiled on Linux using MinGW.
+
+<Steps>
+  <Step title="Install MinGW cross-compiler">
+    Install the 32-bit MinGW-w64 toolchain for your distribution:
+    
+    **Debian/Ubuntu:**
+    ```bash
+    sudo apt install mingw-w64 cmake python3 git
+    ```
+    
+    **Arch Linux:**
+    ```bash
+    sudo pacman -S mingw-w64-gcc cmake python git
+    ```
+    
+    **Fedora:**
+    ```bash
+    sudo dnf install mingw32-gcc mingw32-gcc-c++ cmake python3 git
+    ```
+  </Step>
+  
+  <Step title="Configure the build">
+    Use the MinGW CMake wrapper:
+    
+    ```bash
+    i686-w64-mingw32-cmake -S <path-to-source> -B build -DCMAKE_BUILD_TYPE=Release
+    ```
+    
+    On some distributions, the command might be `mingw32-cmake` instead.
+  </Step>
+  
+  <Step title="Build Chimera">
+    Compile the project:
+    
+    ```bash
+    cmake --build build
+    ```
+  </Step>
+  
+  <Step title="Locate the output">
+    The compiled DLL will be in `build/src/chimera/` or similar, depending on the project structure.
+  </Step>
+</Steps>
+
+## Build Configuration
+
+### Build Types
+
+Chimera supports standard CMake build types:
+
+```bash
+# Release build (optimized, no debug info)
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+# Debug build (debug symbols, no optimization)
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+# Release with debug info
+cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
+```
+
+### CMake Options
+
+| Option | Description | Default |
+|--------|-------------|----------|
+| `CMAKE_BUILD_TYPE` | Build configuration | `Release` |
+| `CHIMERA_WINXP` | Enable Windows XP support | `OFF` |
+
+### Example: Custom Configuration
+
+```bash
+cmake -S . -B build \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCHIMERA_WINXP=ON
+cmake --build build
+```
+
+## Project Structure
+
+Chimera's source is organized as follows:
+
+```
+chimera/
+├── src/
+│   ├── chimera/          # Main Chimera mod
+│   ├── monolith/         # Mod loader
+│   ├── map_downloader/   # Map downloading system
+│   ├── lua/              # Lua interpreter
+│   └── blake3/           # BLAKE3 hashing
+├── compressor/           # chimera-compress tool
+├── CMakeLists.txt        # Root build configuration
+├── dependencies.cmake    # Dependency management
+└── README.md            # Documentation
+```
+
+## Build Artifacts
+
+After a successful build, you'll find:
+
+- **strings.dll** - Main Chimera DLL (replaces Halo's strings.dll)
+- **chimera-compress** - Map compression utility
+- **chimera.ini** - Configuration file template
+
+## Troubleshooting
+
+### CMake can't find MinGW
+
+**Windows:**
+- Ensure you're using the MINGW32 subsystem in MSYS2 (not MSYS2 or MINGW64)
+- For Winlibs, verify `mingw32\bin` is in your PATH
+
+**Linux:**
+- Install the MinGW package for your distribution
+- Try the full command name: `i686-w64-mingw32-cmake`
+
+### Python not found
+
+- Install Python 3 and ensure it's in your PATH
+- On Windows, reinstall Python and check "Add to PATH"
+
+### Build fails with path errors (Winlibs)
+
+- Ensure the source is in a path with **no spaces**: `C:\source\chimera` ✓, `C:\My Projects\chimera` ✗
+- Keep the path short to avoid MAX_PATH issues
+
+### Git version information not included
+
+- Install Git for Windows or git on Linux
+- Ensure `.git` directory exists in the source tree
+- Git is optional but recommended for proper version strings
+
+### Wrong architecture (64-bit instead of 32-bit)
+
+- Ensure you're using the **i686** (32-bit) MinGW toolchain, not x86_64
+- In MSYS2, use **MINGW32** not MINGW64
+- Verify with: `gcc -dumpmachine` (should show `i686-w64-mingw32`)
+
+### Linker errors
+
+- Clean the build directory: `rm -rf build`
+- Reconfigure and rebuild from scratch
+- Ensure all dependencies are installed
+
+## Testing the Build
+
+<Steps>
+  <Step title="Backup original files">
+    Before testing, back up your original Halo installation:
+    
+    - Rename `strings.dll` to `strings-old.dll`
+  </Step>
+  
+  <Step title="Install your build">
+    Copy the compiled `strings.dll` to your Halo game directory.
+  </Step>
+  
+  <Step title="Test basic functionality">
+    Launch Halo and verify:
+    
+    - Game starts without errors
+    - Main menu appears correctly
+    - Console opens with backtick (\`) key
+    - Type `chimera` in console to see version info
+  </Step>
+  
+  <Step title="Test features">
+    Try various Chimera features:
+    
+    - Load a map
+    - Join a multiplayer server
+    - Test a Chimera command (e.g., `chimera_show_fps 1`)
+  </Step>
+</Steps>
+
+## Advanced Topics
+
+### Building Dependencies
+
+Chimera's dependencies are managed in `dependencies.cmake`. Most dependencies are header-only or bundled with the source.
+
+### Modifying the Build
+
+To customize Chimera:
+
+1. Edit source files in `src/chimera/`
+2. Reconfigure if you added/removed files: `cmake -B build`
+3. Rebuild: `cmake --build build`
+
+### Cross-Compiling from Other Platforms
+
+Theoretically, you can cross-compile from macOS using MinGW from Homebrew, but this is unsupported and untested.
+
+## Contributing
+
+If you're building Chimera to contribute:
+
+1. Fork the repository on GitHub
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+See the project's CONTRIBUTING.md for detailed guidelines.
+
+## Resources
+
+- **Official Repository:** [github.com/SnowyMouse/chimera](https://github.com/SnowyMouse/chimera)
+- **MSYS2:** [msys2.org](https://www.msys2.org/)
+- **Winlibs:** [winlibs.com](https://winlibs.com)
+- **CMake Documentation:** [cmake.org/documentation](https://cmake.org/documentation/)
+- **MinGW-w64:** [mingw-w64.org](https://www.mingw-w64.org/)

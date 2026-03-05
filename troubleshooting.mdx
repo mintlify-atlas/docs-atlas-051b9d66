@@ -1,0 +1,237 @@
+---
+title: Troubleshooting
+description: Solutions to common Chimera problems
+---
+
+This page covers common issues you might encounter while using Chimera and their solutions.
+
+## Installation Issues
+
+<AccordionGroup>
+  <Accordion title="Chimera doesn't load when I start Halo">
+    Make sure you've followed the installation steps correctly:
+
+    1. Update Halo to version 1.10 (unless you're playing the trial)
+    2. Back up your game's Strings.dll (rename it to `strings-old.dll`)
+    3. Copy `strings.dll`, `chimera.ini`, and `fonts` into your game folder
+    4. Optionally add a `mods` folder to load custom dll mods
+
+    <Warning>
+      Each file goes into the **main game folder**, NOT the controls folder. If you put the files in controls, it will not work.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="How do I uninstall Chimera?">
+    Uninstalling Chimera is simple:
+
+    1. Delete Chimera's strings.dll and optionally chimera.ini, fonts, and/or mods
+    2. Rename your backed up copy of Halo's Strings.dll back to `strings.dll`
+  </Accordion>
+</AccordionGroup>
+
+## Font & Display Issues
+
+<AccordionGroup>
+  <Accordion title="Custom fonts are not working">
+    This occurs when a required DirectX 9 library isn't installed.
+
+    **Solution:** Download and run the official DirectX installer from [Microsoft](https://www.microsoft.com/en-us/download/details.aspx?id=35).
+
+    <Note>
+      This is a different installer than the DirectX 12 that comes with Windows. You need the legacy DirectX End-User Runtime.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Gamma settings don't work">
+    Halo's gamma setting has been intentionally disabled in Chimera because it modifies your operating system's registry and can cause issues if Halo crashes.
+
+    **Solution:** Use [dgVoodoo2](http://dege.freeweb.hu/dgVoodoo2/) for gamma/brightness adjustments instead.
+
+    <Info>
+      dgVoodoo2 is a graphics wrapper that provides better control over visual settings without the registry issues.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Game looks too dark or too bright">
+    Since Chimera disables Halo's built-in gamma setting, use one of these alternatives:
+
+    - **Recommended:** Install [dgVoodoo2](http://dege.freeweb.hu/dgVoodoo2/) for proper gamma control
+    - Adjust your monitor's brightness settings
+    - Use your GPU driver's control panel (NVIDIA Control Panel or AMD Radeon Software)
+  </Accordion>
+</AccordionGroup>
+
+## Performance Issues
+
+<AccordionGroup>
+  <Accordion title="Game stutters or has poor performance">
+    Try these solutions:
+
+    ### Enable Maps in RAM
+    If you have 8GB+ of RAM, enable the memory settings in `chimera.ini`:
+
+    ```ini
+    [memory]
+    enabled=1
+    map_size=768
+    benchmark=1
+    ```
+
+    This loads maps directly into RAM, reducing hiccups and stutters, especially on slower storage.
+
+    <Note>
+      You will need an LAA-patched executable to use this feature.
+    </Note>
+
+    ### Use Compressed Maps
+    Chimera supports maps compressed with the chimera-compress tool. If maps in RAM is enabled, compressed maps will be decompressed directly into RAM.
+
+    ### Limit Frame Rate
+    If experiencing instability at high frame rates, use:
+    ```
+    chimera_throttle_fps 60
+    ```
+  </Accordion>
+
+  <Accordion title="Slow loading times">
+    **For Custom Edition users:**
+
+    Halo Custom Edition CRC32s every map on startup. On a large maps folder, this drastically increases loading time.
+
+    **How Chimera Fixes This:**
+    Chimera fixes this by CRC32ing the map when you load the map, not the game. This means:
+    - Faster startup times
+    - No cached CRC32s that could allow joining servers with mismatched maps
+    - Better protection against crashes from incompatible maps
+  </Accordion>
+
+  <Accordion title="Server listing takes too long">
+    Chimera speeds up server queries automatically. If you're still experiencing slow server listing:
+
+    - Check your internet connection
+    - The master server might be experiencing issues
+    - Try refreshing the server list
+  </Accordion>
+</AccordionGroup>
+
+## Multiplayer Issues
+
+<AccordionGroup>
+  <Accordion title="CRC32 mismatch error when joining servers">
+    This error occurs when your map file differs from the server's map file.
+
+    **Why this happens:**
+    - You have a modified version of the map
+    - The map file is corrupted
+    - You have a different version than the server
+
+    **Solutions:**
+    1. Download the original, unmodified map
+    2. Let Chimera auto-download the map from the HAC2 Map repo (if enabled)
+    3. If you intentionally modified the map, forge the CRC32 (advanced users only)
+
+    <Warning>
+      Using maps with mismatched CRC32 values can cause crashes. This check exists for your protection.
+    </Warning>
+  </Accordion>
+
+  <Accordion title="Map auto-download not working">
+    Chimera automatically attempts to download maps from the HAC2 Map repo when joining servers.
+
+    **Check your settings:**
+    - Maps are stored in `chimera/maps` in your Halo profiles folder by default
+    - You can configure a different map source using the `download_template` setting in chimera.ini
+    - You can change the download path with the `download_map_path` setting
+
+    **If downloads still fail:**
+    - Check your internet connection
+    - The map might not be available on the repo
+    - Manually download the map and place it in your maps folder
+  </Accordion>
+
+  <Accordion title="Can't join server with same CD key">
+    Chimera reduces DRM restrictions, allowing you to join servers even with duplicate CD keys.
+
+    **How it works:**
+    - Normally, Halo prevents joining servers with duplicate CD keys
+    - Chimera disables the CD key check for local hosting
+    - You can host a game and join yourself for testing
+
+    <Note>
+      This does not "crack" the game. You still need a valid Halo installation.
+    </Note>
+  </Accordion>
+
+  <Accordion title="Vehicle desync on multi-team servers">
+    If you're experiencing desync with multi-team vehicles:
+
+    **Solution:** Make sure you're using a current version of Chimera. The multi-team vehicles fix is built-in and automatic.
+
+    **For server hosts:** Enable `chimera_allow_all_passengers` to allow anyone to enter anyone's vehicle without desync issues.
+  </Accordion>
+</AccordionGroup>
+
+## Map & File Issues
+
+<AccordionGroup>
+  <Accordion title="Maps over 128 MiB cause issues">
+    **This is automatically fixed by Chimera.**
+
+    In vanilla Halo, loading maps over 128 MiB causes a memory leak (the game opens the map multiple times and only closes it once). Chimera fixes this by removing the file size check.
+
+    <Info>
+      With Chimera installed, you can safely use large maps without memory leaks.
+    </Info>
+  </Accordion>
+
+  <Accordion title="Campaign option missing in Custom Edition">
+    Chimera automatically re-enables the campaign option if all campaign maps are available.
+
+    **Make sure you have these maps:**
+    - a10.map
+    - a30.map
+    - a50.map
+    - b30.map
+    - b40.map
+    - c10.map
+    - c20.map
+    - c40.map
+    - d20.map
+    - d40.map
+
+    If all campaign maps are in your maps folder, Chimera will enable the campaign option just like in the retail version.
+  </Accordion>
+</AccordionGroup>
+
+## Wine/Linux Issues
+
+<AccordionGroup>
+  <Accordion title="Chimera doesn't work on Wine">
+    **Minimum Wine version:** Wine 4.0 or newer
+
+    If you're using Wine 4.0+ and still having issues:
+    - Make sure all dependencies are installed
+    - Check Wine console output for errors
+    - Try using a newer version of Wine
+    - Check the [Compatibility](/compatibility) page for Wine-specific information
+  </Accordion>
+
+  <Accordion title="Obfuscated DLLs crash on Wine">
+    Some mods use obfuscated DLLs that Wine has trouble loading.
+
+    **Note:** Chimera itself is not obfuscated and should work fine on Wine. This issue typically affects other mods like older versions of SAPP.
+
+    <Warning>
+      If you're experiencing crashes with other mods on Wine, you may need to unpack the obfuscated DLLs or use a different version of the mod.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+## Still Need Help?
+
+If you're still experiencing issues:
+
+- Check the [FAQ](/faq) for common questions
+- Check the [Compatibility](/compatibility) page for mod/platform compatibility info
+- Visit the Discord server for community support
+- Report bugs on the [GitHub repository](https://github.com/SnowyMouse/chimera)

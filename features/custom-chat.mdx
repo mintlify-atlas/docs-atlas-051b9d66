@@ -1,0 +1,491 @@
+---
+title: Custom Chat
+description: Stable replacement for the broken Keystone chat system
+icon: comments
+---
+
+Chimera replaces Halo PC's crashy and broken Keystone chat with a completely custom, highly configurable chat system.
+
+## Why Replace the Chat?
+
+<Warning>
+**The Keystone chat is crashy and broken.**
+
+Halo PC's original chat system has numerous issues:
+- Frequent crashes
+- Memory leaks
+- Poor rendering
+- Limited customization
+- Inconsistent behavior
+</Warning>
+
+Chimera's custom chat is:
+- **Stable** - No crashes or memory leaks
+- **Customizable** - Extensive configuration options
+- **Feature-rich** - Color support, timestamps, filtering
+- **Performant** - Efficient rendering and scrolling
+
+## Always Enabled
+
+<Info>
+The custom chat is **always enabled** as a passive feature. The original Keystone chat is completely replaced.
+</Info>
+
+## Core Features
+
+### Color Support
+
+Full RGB color support for chat messages.
+
+**Usage**: Use color codes in messages:
+
+```bash
+chimera_chat_color_help  # Show available colors
+```
+
+**Team Colors**:
+- Free-for-all messages: Green tint
+- Red team messages: Red tint
+- Blue team messages: Blue tint
+- Server messages: Blue tint
+
+### Message Types
+
+Three distinct message categories:
+
+<Tabs>
+  <Tab title="Chat Messages">
+    Player-to-player communication:
+    - All chat (everyone sees)
+    - Team chat (team only)
+    - Vehicle chat (vehicle occupants)
+  </Tab>
+  
+  <Tab title="Server Messages">
+    Messages from the server:
+    - Admin broadcasts
+    - Game events
+    - Server notifications
+    - RCON responses
+  </Tab>
+  
+  <Tab title="Console Messages">
+    Optional console integration for RCON:
+    ```ini
+    [custom_chat]
+    server_message_allow_unsolicted_rcon_messages=1
+    ```
+  </Tab>
+</Tabs>
+
+### Scrollback Support
+
+Optional scrollback for console history:
+
+```ini
+[custom_console]
+enable_scrollback=1  ; Enable page up/down scrolling
+```
+
+<Note>
+Custom console and custom chat are separate but related features. Both improve upon the original implementations.
+</Note>
+
+## Extensive Customization
+
+Chimera's chat is **highly customizable** through `chimera.ini`.
+
+### Server Messages
+
+Configure server message appearance:
+
+```ini
+[custom_chat]
+
+; Color (RGBA, 0-1 intensity)
+server_message_color_a=0.5
+server_message_color_r=0.45
+server_message_color_g=0.72
+server_message_color_b=1.0
+
+; Position (HUD pixels)
+server_message_x=360
+server_message_y=60
+
+; Dimensions (HUD pixels)
+server_message_w=350
+server_message_h=380
+server_message_h_chat_open=160
+
+; Anchor point
+server_message_anchor=top_right  ; top_left, top_right, center, bottom_left, bottom_right
+
+; Font
+server_message_font=small  ; smaller, small, large, console, system
+
+; Timing (seconds)
+server_slide_time_length=0    ; Animation time
+server_time_up=5.0            ; Display duration
+server_fade_out_time=1.0      ; Fade out duration
+
+; Line spacing
+server_line_height=1.1
+
+; Hide when console visible
+server_message_hide_on_console=0
+```
+
+### Chat Messages
+
+Configure player chat appearance:
+
+```ini
+[custom_chat]
+
+; Free-for-all color (RGBA, 0-1 intensity)
+chat_message_color_ffa_a=0.85
+chat_message_color_ffa_r=0.85
+chat_message_color_ffa_g=1.0
+chat_message_color_ffa_b=0.85
+
+; Red team color
+chat_message_color_red_a=0.85
+chat_message_color_red_r=1.0
+chat_message_color_red_g=0.85
+chat_message_color_red_b=0.85
+
+; Blue team color
+chat_message_color_blue_a=0.85
+chat_message_color_blue_r=0.85
+chat_message_color_blue_g=0.85
+chat_message_color_blue_b=1.0
+
+; Position (HUD pixels)
+chat_message_x=8
+chat_message_y=38
+
+; Dimensions (HUD pixels)  
+chat_message_w=612
+chat_message_h=300
+chat_message_h_chat_open=300
+
+; Anchor point
+chat_message_anchor=top_left
+
+; Font
+chat_message_font=small
+
+; Timing (seconds)
+chat_slide_time_length=0.25   ; Animation time
+chat_time_up=5.0              ; Display duration
+chat_fade_out_time=1.0        ; Fade out duration
+
+; Line spacing
+chat_line_height=1.1
+
+; Hide when console visible
+chat_message_hide_on_console=1
+```
+
+### Chat Input
+
+Customize the chat input box:
+
+```ini
+[custom_chat]
+
+; Input color (RGBA, 0-1 intensity)
+chat_input_color_a=1.0
+chat_input_color_r=1.0
+chat_input_color_g=1.0
+chat_input_color_b=1.0
+
+; Position (HUD pixels)
+chat_input_x=8
+chat_input_y=338
+
+; Width (HUD pixels)
+chat_input_w=612
+
+; Anchor point
+chat_input_anchor=top_left
+
+; Font
+chat_input_font=small
+```
+
+## Console Commands
+
+Chat-related console commands:
+
+### Block Server IPs
+
+Hide server IPs from chat (useful for streamers):
+
+```bash
+chimera_chat_block_ips true
+```
+
+<Tip>
+**Streamers**: Enable this to prevent viewers from seeing which server you're on.
+</Tip>
+
+### Block Server Messages
+
+Block all messages from the server:
+
+```bash
+chimera_chat_block_server_messages true
+```
+
+<Warning>
+RCON responses will still appear in console, not chat.
+</Warning>
+
+### Send Chat Message
+
+Programmatically send chat messages:
+
+```bash
+chimera_send_chat_message <channel> <message>
+```
+
+**Channels**:
+- `0` - All chat
+- `1` - Team chat  
+- `2` - Vehicle chat
+- Other channels may be used by mods
+
+**Examples**:
+
+```bash
+# Send to all chat
+chimera_send_chat_message 0 "Hello everyone!"
+
+# Send to team chat
+chimera_send_chat_message 1 "Attack the base!"
+
+# Send to vehicle chat
+chimera_send_chat_message 2 "I'm driving"
+```
+
+### Color Help
+
+Display available chat colors:
+
+```bash
+chimera_chat_color_help
+```
+
+Shows all color codes and examples.
+
+## Custom Console
+
+Related feature - custom console with improvements:
+
+```ini
+[custom_console]
+
+; Enable custom console
+enabled=1
+
+; Enable scrollback with page up/down
+enable_scrollback=1
+
+; Buffer size (lines)
+buffer_size=10000
+buffer_size_soft=256  ; Soft limit before cleanup
+
+; Appearance
+line_height=1.1
+x_margin=10
+
+; Fade timing (seconds)
+fade_start=3.0
+fade_time=0.75
+```
+
+### Console Prompt Color
+
+Customize console input color:
+
+```bash
+chimera_console_prompt_color <red> <green> <blue>
+```
+
+**Example**:
+```bash
+# Green prompt
+chimera_console_prompt_color 0 1 0
+
+# Cyan prompt  
+chimera_console_prompt_color 0 1 1
+```
+
+## Font Customization
+
+Chat can use any of Chimera's fonts:
+
+**Available fonts**:
+- `smaller` - Smallest font
+- `small` - Default small font
+- `large` - Large font
+- `console` - Monospace console font (Hack Bold)
+- `system` - System font (Interstate Bold)
+
+**Font override** in `chimera.ini`:
+
+```ini
+[font_override]
+enabled=1
+
+; Customize each font size/family
+small_font_family=Interstate-Bold
+small_font_size=15
+small_font_weight=400
+```
+
+<Note>
+See the Font Override section for complete font customization options.
+</Note>
+
+## Animation and Timing
+
+Control how messages appear and disappear:
+
+<AccordionGroup>
+  <Accordion title="Slide Animation">
+    Messages can slide in when appearing:
+    
+    ```ini
+    chat_slide_time_length=0.25  ; 0.25 second slide-in
+    server_slide_time_length=0   ; No animation (instant)
+    ```
+  </Accordion>
+  
+  <Accordion title="Display Duration">
+    How long messages stay visible:
+    
+    ```ini
+    chat_time_up=5.0        ; 5 seconds visible
+    server_time_up=5.0      ; 5 seconds visible
+    ```
+  </Accordion>
+  
+  <Accordion title="Fade Out">
+    Fade out duration before disappearing:
+    
+    ```ini
+    chat_fade_out_time=1.0    ; 1 second fade
+    server_fade_out_time=1.0  ; 1 second fade
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Layout Examples
+
+### Default Layout
+
+```
+┌─────────────────────────────────┐
+│  Chat messages (top-left)       │
+│                                  │
+│                                  │
+│                                  │
+│                                  │
+│                Server messages ──┤ (top-right)
+│                                  │
+│                                  │
+│                                  │
+│                                  │
+│                                  │
+│  Chat input (bottom)             │
+└─────────────────────────────────┘
+```
+
+### Custom Layout
+
+You can position elements anywhere:
+
+```ini
+; Bottom-left chat
+chat_message_anchor=bottom_left
+chat_message_x=10
+chat_message_y=100
+
+; Top-center server messages
+server_message_anchor=center
+server_message_x=0  ; Centered
+server_message_y=10
+```
+
+## HUD Pixel Coordinates
+
+Coordinates are in **HUD pixels**:
+
+- Standard: 640x480 HUD space
+- Scales automatically to your resolution
+- Anchor point determines coordinate origin
+
+**Anchor points**:
+- `top_left` - (0,0) is top-left corner
+- `top_right` - (0,0) is top-right corner  
+- `center` - (0,0) is center of screen
+- `bottom_left` - (0,0) is bottom-left corner
+- `bottom_right` - (0,0) is bottom-right corner
+
+## Technical Implementation
+
+**Location**: `src/chimera/halo_data/chat.cpp`
+
+```cpp
+extern "C" void chat_out_asm(int channel, const wchar_t *message);
+
+void chat_out(int channel, const wchar_t *message) {
+    if(!message) {
+        return;
+    }
+    chat_out_asm(channel, message);
+}
+```
+
+Supports both wide-character and UTF-8 input:
+
+```cpp
+void chat_out(int channel, const char *message) {
+    wchar_t message_to_send[256] = {};
+    MultiByteToWideChar(CP_UTF8, 0, message, -1, 
+                        message_to_send, sizeof(message_to_send));
+    chat_out_asm(channel, message_to_send);
+}
+```
+
+## Best Practices
+
+<Tip>
+**For competitive play**: Keep chat minimal and positioned away from crosshair.
+
+**For streaming**: Enable `chimera_chat_block_ips true` to hide server IPs.
+
+**For recording**: Customize colors to match your overlay/theme.
+</Tip>
+
+## Related Features
+
+<CardGroup cols={2}>
+  <Card title="Font Override" icon="font" href="/configuration/fonts">
+    Customize chat fonts
+  </Card>
+  
+  <Card title="Console Commands" icon="terminal" href="/commands/chat">
+    Chat-related commands
+  </Card>
+  
+  <Card title="Hotkeys" icon="keyboard" href="/configuration/hotkeys">
+    Bind chat commands to keys
+  </Card>
+  
+  <Card title="Widescreen Fix" icon="tv" href="/commands/widescreen-fix">
+    Ensure chat scales on widescreen
+  </Card>
+</CardGroup>

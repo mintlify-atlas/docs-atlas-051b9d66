@@ -1,0 +1,271 @@
+---
+title: Automatic Map Downloading
+description: Automatically download missing maps from online repositories
+---
+
+Chimera can automatically download maps you don't have when joining multiplayer servers. This feature eliminates the need to manually search for and download maps, streamlining the multiplayer experience.
+
+## Overview
+
+When you attempt to join a server that's running a map you don't have, Chimera will:
+
+1. Detect that the map is missing
+2. Automatically begin downloading it from a configured repository
+3. Display download progress with speed and file size information
+4. Complete the download and join the server
+
+By default, maps are downloaded from the [HAC2 Map Repository](http://maps.halonet.net/maplist.php).
+
+## Default Configuration
+
+### Download Source
+
+Chimera downloads maps from the HAC2/HaloNet repository by default:
+
+```
+http://maps.halonet.net/maplist.php
+```
+
+This repository contains a large collection of community-created Custom Edition maps.
+
+### Download Location
+
+Downloaded maps are stored in:
+
+```
+%USERPROFILE%\Documents\My Games\Halo CE\chimera\maps
+```
+
+This keeps downloaded maps separate from your main maps folder by default.
+
+## Configuration
+
+Map downloading can be customized in `chimera.ini` under the `[memory]` section:
+
+### Download Path
+
+Change where downloaded maps are saved:
+
+```ini
+[memory]
+; Custom download path (relative to Halo profiles folder)
+download_map_path=chimera/maps
+
+; Or use an absolute path
+download_map_path=C:\CustomMaps\Downloaded
+```
+
+### Download Template
+
+Customize the download URL template:
+
+```ini
+[memory]
+; URL template with placeholders
+download_template=http://{mirror<repo.halomaps.org,maps.halonet.net>}/maps/{map}.map?server={server}&password={password}
+```
+
+### Template Placeholders
+
+The download URL template supports several placeholders:
+
+| Placeholder | Description | Example |
+|------------|-------------|----------|
+| `{map}` | Map name (URL encoded) | `bloodgulch` |
+| `{game}` | Game engine type | `retail` or `custom` |
+| `{server}` | Server address | `192.168.1.100:2302` |
+| `{password}` | Server password (URL encoded) | `mypassword` |
+| `{mirror<list>}` | Mirror list (comma-separated) | `server1.com,server2.com` |
+
+### Mirror Failover
+
+The `{mirror<>}` placeholder supports multiple mirrors with automatic failover:
+
+```ini
+download_template=http://{mirror<repo.halomaps.org,maps.halonet.net,mirror3.com>}/maps/{map}.map
+```
+
+Chimera will try each mirror in order until a successful download occurs.
+
+### Retail Map Downloads
+
+<Warning>
+  **Security Warning:** Downloading retail Halo PC maps is disabled by default for security reasons.
+</Warning>
+
+Retail maps can be modified to contain malicious content. Only enable if you trust the download source:
+
+```ini
+[memory]
+; UNSAFE - only enable if you trust the source
+download_retail_maps=1
+```
+
+### Download Font
+
+Customize the font used for download progress display:
+
+```ini
+[memory]
+; Font for download progress overlay
+download_font=console
+```
+
+## Download Process
+
+<Steps>
+  <Step title="Server connection attempt">
+    When you try to join a server, Chimera checks if you have the required map.
+  </Step>
+  
+  <Step title="Download initiation">
+    If the map is missing and downloading is enabled:
+    
+    - Chimera constructs the download URL using the template
+    - A download thread is spawned to fetch the map
+    - Progress is displayed on-screen
+  </Step>
+  
+  <Step title="Download progress">
+    During download, you'll see:
+    
+    - Map name being downloaded
+    - Current download speed (KB/s or MB/s)
+    - Downloaded size / total size
+    - Progress percentage
+  </Step>
+  
+  <Step title="Validation">
+    Once downloaded:
+    
+    - Chimera validates the map file header (checks for 'head' and 'foot' magic values)
+    - Invalid or corrupted downloads are rejected
+    - Successful downloads are saved to the configured location
+  </Step>
+  
+  <Step title="Server join">
+    After successful validation, Chimera automatically proceeds to join the server with the newly downloaded map.
+  </Step>
+</Steps>
+
+## Technical Details
+
+### Implementation
+
+Chimera's map downloader uses:
+
+- **libcurl** - For HTTP/HTTPS downloads
+- **Multi-threading** - Downloads occur in a background thread
+- **Buffering** - 1 MiB memory buffer for efficient I/O
+- **Timeout** - 10 second connection timeout
+- **User Agent** - `Chimera MapDownloader/1.0`
+
+### Download Validation
+
+Map files are validated by checking magic values:
+
+**Standard maps (retail/Custom Edition):**
+```cpp
+header[0x000] == 0x68656164 ("head")
+header[0x7FC] == 0x666F6F74 ("foot")
+```
+
+**Demo maps (trial):**
+```cpp
+header[0x2C0] == 0x45686564 ("Ehed")
+header[0x5F0] == 0x47666F74 ("Gfot")
+```
+
+Downloads with invalid headers (e.g., HTML error pages) are automatically rejected.
+
+### Security Considerations
+
+Chimera implements several security measures:
+
+1. **Header validation** - Ensures downloaded files are valid map files
+2. **Minimum size check** - Files must be at least 2048 bytes (0x800)
+3. **Retail map blocking** - Retail maps blocked by default to prevent replacement attacks
+4. **URL encoding** - Map names and passwords are properly URL-encoded
+5. **HTTPS support** - Supports secure downloads when configured
+
+## Custom Download Servers
+
+You can set up your own map download server and point Chimera to it:
+
+### Simple HTTP Server
+
+```ini
+[memory]
+download_template=http://mymapserver.com/maps/{map}.map
+```
+
+Your server should:
+- Respond to GET requests for `/{map}.map`
+- Return 404 for missing maps
+- Support HTTP/1.1
+
+### Advanced Template
+
+For more complex setups:
+
+```ini
+[memory]
+download_template=https://api.mymaps.com/download?name={map}&game={game}&srv={server}
+```
+
+This allows your server to:
+- Log download statistics
+- Implement access control
+- Serve different map versions based on game type
+- Track which servers are requesting maps
+
+## Troubleshooting
+
+### Download fails to start
+
+- Check that `download_template` is configured in `chimera.ini`
+- Verify you have write permissions to the download path
+- Ensure your internet connection is active
+
+### Download times out
+
+- The default timeout is 10 seconds for connection establishment
+- Check your firewall settings
+- Verify the download server is online
+- Try a different mirror if using multiple mirrors
+
+### Invalid map file error
+
+- The downloaded file is not a valid map (likely an error page)
+- Check that the download URL template is correct
+- Verify the map exists on the server
+- Try downloading the map manually to test the URL
+
+### Wrong map downloaded
+
+- Ensure the `{map}` placeholder is in the correct position in your template
+- Check that the server is returning the correct map for the requested name
+- Map names are case-insensitive (automatically converted to lowercase)
+
+### Downloaded maps not loading
+
+- Check that the maps are in the correct folder
+- Verify the download path setting in `chimera.ini`
+- Ensure Chimera has read access to the download folder
+- The map may be corrupted - try deleting and re-downloading
+
+## Performance Tips
+
+1. **Use local mirrors** - Host frequently used maps on a local network server for faster downloads
+2. **Enable compression** - Serve compressed maps if your server supports it
+3. **Increase buffer size** - The default 1 MiB buffer works well for most connections
+4. **Use HTTPS** - Provides security but may be slightly slower than HTTP
+5. **Pre-download maps** - For frequently played servers, manually download maps ahead of time
+
+## Best Practices
+
+1. **Organize downloads** - Use a separate folder for auto-downloaded maps
+2. **Regular cleanup** - Periodically review and remove unused maps
+3. **Mirror redundancy** - Configure multiple mirrors for reliability
+4. **Trust your sources** - Only download from trusted repositories
+5. **Monitor disk space** - Auto-downloading can fill disk space over time

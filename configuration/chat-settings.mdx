@@ -1,0 +1,397 @@
+---
+title: "Chat Settings"
+description: "Configure custom chat, server messages, and console display"
+---
+
+## Overview
+
+Chimera provides extensive customization for chat, server messages, and console display through the `[custom_chat]` and `[custom_console]` sections.
+
+## Custom Console
+
+The `[custom_console]` section configures the developer console appearance and behavior.
+
+### Enable Custom Console
+
+<ParamField path="enabled" type="boolean" default="0">
+  Enable custom console features.
+</ParamField>
+
+<ParamField path="enable_scrollback" type="boolean" default="1">
+  Enable scrollback with Page Up/Down keys.
+</ParamField>
+
+```ini
+[custom_console]
+enabled=1
+enable_scrollback=1
+```
+
+### Buffer Settings
+
+<ParamField path="buffer_size" type="number" default="10000">
+  Maximum number of lines the console can store.
+</ParamField>
+
+<ParamField path="buffer_size_soft" type="number" default="256">
+  Soft limit - old lines are deleted after this many lines are hit.
+</ParamField>
+
+```ini
+[custom_console]
+buffer_size=10000
+buffer_size_soft=256
+```
+
+### Display Settings
+
+<ParamField path="line_height" type="number" default="1.1">
+  Line height multiplier. `1.0` means potentially no gap between lines.
+</ParamField>
+
+<ParamField path="x_margin" type="number" default="10">
+  Margins on left and right side in pixels.
+</ParamField>
+
+<ParamField path="fade_start" type="number" default="3.0">
+  Time in seconds before lines start fading.
+</ParamField>
+
+<ParamField path="fade_time" type="number" default="0.75">
+  Time in seconds for lines to completely fade.
+</ParamField>
+
+```ini
+[custom_console]
+line_height=1.1
+x_margin=10
+fade_start=3.0
+fade_time=0.75
+```
+
+## Custom Chat
+
+The `[custom_chat]` section configures chat messages, server messages, and chat input display.
+
+### Server Messages
+
+Server messages appear in the top-right by default and show announcements from the server.
+
+#### Colors
+
+<ParamField path="server_message_color_a" type="number" default="0.5">
+  Alpha (transparency) from 0-1.
+</ParamField>
+
+<ParamField path="server_message_color_r" type="number" default="0.45">
+  Red intensity from 0-1.
+</ParamField>
+
+<ParamField path="server_message_color_g" type="number" default="0.72">
+  Green intensity from 0-1.
+</ParamField>
+
+<ParamField path="server_message_color_b" type="number" default="1.0">
+  Blue intensity from 0-1.
+</ParamField>
+
+```ini
+[custom_chat]
+server_message_color_a=0.5
+server_message_color_r=0.45
+server_message_color_g=0.72
+server_message_color_b=1.0
+```
+
+#### Position and Size
+
+<ParamField path="server_message_x" type="number" default="360">
+  X offset in HUD pixels.
+</ParamField>
+
+<ParamField path="server_message_y" type="number" default="60">
+  Y offset in HUD pixels.
+</ParamField>
+
+<ParamField path="server_message_w" type="number" default="350">
+  Width in HUD pixels.
+</ParamField>
+
+<ParamField path="server_message_h" type="number" default="380">
+  Height in HUD pixels.
+</ParamField>
+
+<ParamField path="server_message_h_chat_open" type="number" default="160">
+  Height when chat is open in HUD pixels.
+</ParamField>
+
+<ParamField path="server_message_anchor" type="string" default="top_right">
+  Anchor point. Options: `top_left`, `top_right`, `center`, `bottom_left`, `bottom_right`
+</ParamField>
+
+```ini
+[custom_chat]
+server_message_x=360
+server_message_y=60
+server_message_w=350
+server_message_h=380
+server_message_h_chat_open=160
+server_message_anchor=top_right
+```
+
+#### Behavior
+
+<ParamField path="server_message_hide_on_console" type="boolean" default="0">
+  Hide server messages when console is visible.
+</ParamField>
+
+<ParamField path="server_message_font" type="string" default="small">
+  Font for server messages. Options: `smaller`, `small`, `large`, `console`, `system`
+</ParamField>
+
+<ParamField path="server_slide_time_length" type="number" default="0">
+  Animation time in seconds for sliding.
+</ParamField>
+
+<ParamField path="server_time_up" type="number" default="5.0">
+  Display time in seconds when chat is not in focus.
+</ParamField>
+
+<ParamField path="server_fade_out_time" type="number" default="1.0">
+  Fade out time in seconds.
+</ParamField>
+
+<ParamField path="server_line_height" type="number" default="1.1">
+  Line height multiplier.
+</ParamField>
+
+<ParamField path="server_message_allow_unsolicted_rcon_messages" type="boolean" default="0">
+  Allow unsolicited rcon messages in console instead of server messages. Off by default as it can disrupt gameplay.
+</ParamField>
+
+```ini
+[custom_chat]
+server_message_font=small
+server_slide_time_length=0
+server_time_up=5.0
+server_fade_out_time=1.0
+server_line_height=1.1
+```
+
+### Chat Messages
+
+Chat messages appear in the top-left by default and show player chat.
+
+#### Team Colors
+
+<ParamField path="chat_message_color_ffa_[a/r/g/b]" type="number">
+  Free-for-all chat color (alpha, red, green, blue) from 0-1.
+</ParamField>
+
+<ParamField path="chat_message_color_red_[a/r/g/b]" type="number">
+  Red team chat color (alpha, red, green, blue) from 0-1.
+</ParamField>
+
+<ParamField path="chat_message_color_blue_[a/r/g/b]" type="number">
+  Blue team chat color (alpha, red, green, blue) from 0-1.
+</ParamField>
+
+```ini
+[custom_chat]
+# Free-for-all
+chat_message_color_ffa_a=0.85
+chat_message_color_ffa_r=0.85
+chat_message_color_ffa_g=1.0
+chat_message_color_ffa_b=0.85
+
+# Red team
+chat_message_color_red_a=0.85
+chat_message_color_red_r=1.0
+chat_message_color_red_g=0.85
+chat_message_color_red_b=0.85
+
+# Blue team
+chat_message_color_blue_a=0.85
+chat_message_color_blue_r=0.85
+chat_message_color_blue_g=0.85
+chat_message_color_blue_b=1.0
+```
+
+#### Position and Size
+
+<ParamField path="chat_message_x" type="number" default="8">
+  X offset in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_message_y" type="number" default="38">
+  Y offset in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_message_w" type="number" default="612">
+  Width in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_message_h" type="number" default="300">
+  Height in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_message_h_chat_open" type="number" default="300">
+  Height when chat is open in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_message_anchor" type="string" default="top_left">
+  Anchor point. Options: `top_left`, `top_right`, `center`, `bottom_left`, `bottom_right`
+</ParamField>
+
+```ini
+[custom_chat]
+chat_message_x=8
+chat_message_y=38
+chat_message_w=612
+chat_message_h=300
+chat_message_anchor=top_left
+```
+
+#### Behavior
+
+<ParamField path="chat_message_hide_on_console" type="boolean" default="1">
+  Hide chat messages when console is visible.
+</ParamField>
+
+<ParamField path="chat_message_font" type="string" default="small">
+  Font for chat messages. Options: `smaller`, `small`, `large`, `console`, `system`
+</ParamField>
+
+<ParamField path="chat_slide_time_length" type="number" default="0.25">
+  Animation time in seconds for sliding.
+</ParamField>
+
+<ParamField path="chat_time_up" type="number" default="5.0">
+  Display time in seconds when chat is not in focus.
+</ParamField>
+
+<ParamField path="chat_fade_out_time" type="number" default="1.0">
+  Fade out time in seconds.
+</ParamField>
+
+<ParamField path="chat_line_height" type="number" default="1.1">
+  Line height multiplier.
+</ParamField>
+
+```ini
+[custom_chat]
+chat_message_hide_on_console=1
+chat_message_font=small
+chat_slide_time_length=0.25
+chat_time_up=5.0
+chat_fade_out_time=1.0
+chat_line_height=1.1
+```
+
+### Chat Input
+
+Chat input field appears when you press the chat key.
+
+#### Colors
+
+<ParamField path="chat_input_color_a" type="number" default="1.0">
+  Alpha (transparency) from 0-1.
+</ParamField>
+
+<ParamField path="chat_input_color_r" type="number" default="1.0">
+  Red intensity from 0-1.
+</ParamField>
+
+<ParamField path="chat_input_color_g" type="number" default="1.0">
+  Green intensity from 0-1.
+</ParamField>
+
+<ParamField path="chat_input_color_b" type="number" default="1.0">
+  Blue intensity from 0-1.
+</ParamField>
+
+```ini
+[custom_chat]
+chat_input_color_a=1.0
+chat_input_color_r=1.0
+chat_input_color_g=1.0
+chat_input_color_b=1.0
+```
+
+#### Position and Size
+
+<ParamField path="chat_input_x" type="number" default="8">
+  X offset in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_input_y" type="number" default="338">
+  Y offset in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_input_w" type="number" default="612">
+  Width in HUD pixels.
+</ParamField>
+
+<ParamField path="chat_input_anchor" type="string" default="top_left">
+  Anchor point. Options: `top_left`, `top_right`, `center`, `bottom_left`, `bottom_right`
+</ParamField>
+
+<ParamField path="chat_input_font" type="string" default="small">
+  Font for chat input. Options: `smaller`, `small`, `large`, `console`, `system`
+</ParamField>
+
+```ini
+[custom_chat]
+chat_input_x=8
+chat_input_y=338
+chat_input_w=612
+chat_input_anchor=top_left
+chat_input_font=small
+```
+
+## Complete Example
+
+```ini
+[custom_console]
+enabled=1
+enable_scrollback=1
+buffer_size=10000
+buffer_size_soft=256
+line_height=1.1
+x_margin=10
+fade_start=3.0
+fade_time=0.75
+
+[custom_chat]
+# Server messages (top-right, cyan)
+server_message_color_a=0.5
+server_message_color_r=0.45
+server_message_color_g=0.72
+server_message_color_b=1.0
+server_message_x=360
+server_message_y=60
+server_message_w=350
+server_message_h=380
+server_message_anchor=top_right
+server_message_font=small
+server_time_up=5.0
+server_fade_out_time=1.0
+
+# Chat messages (top-left)
+chat_message_x=8
+chat_message_y=38
+chat_message_w=612
+chat_message_h=300
+chat_message_anchor=top_left
+chat_message_hide_on_console=1
+chat_message_font=small
+chat_time_up=5.0
+chat_fade_out_time=1.0
+
+# Chat input
+chat_input_x=8
+chat_input_y=338
+chat_input_w=612
+chat_input_anchor=top_left
+chat_input_font=small
+```

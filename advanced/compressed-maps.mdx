@@ -1,0 +1,209 @@
+---
+title: Compressed Maps
+description: Use zstd compression to reduce map file sizes
+---
+
+Chimera supports compressed map files using the zstd (Zstandard) compression algorithm. This feature drastically reduces map file sizes while maintaining fast decompression speeds.
+
+## Overview
+
+Map compression allows you to:
+
+- **Reduce disk space usage** - Maps can be compressed to a fraction of their original size
+- **Maintain performance** - zstd provides blazingly fast decompression
+- **Automatic decompression** - Chimera handles decompression transparently when loading maps
+- **Memory optimization** - When maps in RAM is enabled, compressed maps decompress directly into memory
+
+## The chimera-compress Tool
+
+Chimera includes `chimera-compress`, a command-line utility for compressing and decompressing map files.
+
+### Basic Usage
+
+```bash
+chimera-compress compress <map-file>
+chimera-compress decompress <map-file>
+```
+
+### Compress a map
+
+Compress a map file in-place:
+
+```bash
+chimera-compress compress bloodgulch.map
+```
+
+Compress to a different output file:
+
+```bash
+chimera-compress compress bloodgulch.map bloodgulch_compressed.map
+```
+
+### Decompress a map
+
+Decompress a map file in-place:
+
+```bash
+chimera-compress decompress bloodgulch.map
+```
+
+Decompress to a different output file:
+
+```bash
+chimera-compress decompress bloodgulch_compressed.map bloodgulch.map
+```
+
+## Command Syntax
+
+```bash
+chimera-compress <compress/decompress> <input-map> [output-map]
+```
+
+**Parameters:**
+- `compress/decompress` - Operation to perform
+- `input-map` - Path to the input map file
+- `output-map` - (Optional) Path to the output file. If omitted, the input file is overwritten
+
+## Technical Details
+
+### Compression Algorithm
+
+Chimera uses **zstd (Zstandard)** compression with the following characteristics:
+
+- **Compression level:** 19 (maximum compression)
+- **Algorithm:** Facebook's Zstandard (zstd)
+- **Header size:** 2048 bytes (0x800) - preserved uncompressed
+- **Version marker:** Cache version is OR'd with `0x861A0000` to indicate compression
+
+### Supported Map Types
+
+All Halo cache file types are supported:
+
+- **Retail (version 7)** - Standard Halo PC maps
+- **Custom Edition (version 609)** - Custom Edition maps
+- **Demo (version 6)** - Halo Trial maps
+
+### How It Works
+
+<Steps>
+  <Step title="Compression process">
+    When compressing a map:
+    
+    1. The first 2048 bytes (map header) remain uncompressed
+    2. The remaining map data is compressed using zstd level 19
+    3. The cache version field is modified to indicate compression
+    4. Map metadata (name, build, CRC32, Lua script pointers) is preserved
+  </Step>
+  
+  <Step title="Decompression at runtime">
+    When Chimera loads a compressed map:
+    
+    1. Chimera detects the compressed version marker
+    2. If maps in RAM is enabled, the map decompresses directly into memory
+    3. Otherwise, a temporary decompressed file is created in the Chimera folder
+    4. The game loads the decompressed map transparently
+  </Step>
+</Steps>
+
+### File Size Savings
+
+Compression ratios vary by map, but typical results:
+
+- **Standard maps:** 30-50% size reduction
+- **Maps with repetitive data:** Up to 70% size reduction
+- **Already optimized maps:** 20-30% size reduction
+
+Example:
+```
+bloodgulch.map: Compressed 25,165,824 bytes --> 15,234,112 bytes
+```
+
+## Configuration
+
+Compressed map behavior can be configured in `chimera.ini`:
+
+### Memory Settings
+
+```ini
+[memory]
+; Enable loading maps into RAM (recommended for compressed maps)
+enabled=1
+
+; Map buffer size in MiB (must be large enough for decompressed maps)
+map_size=2048
+
+; Show decompression benchmark
+benchmark=1
+```
+
+<Info>
+  **Performance Tip:** Enable maps in RAM for best performance with compressed maps. This eliminates the need for temporary files and provides the fastest load times.
+</Info>
+
+<Warning>
+  Maps in RAM requires a Large Address Aware (LAA) patched Halo executable to access more than 2GB of RAM.
+</Warning>
+
+## Building chimera-compress
+
+The `chimera-compress` tool is built as part of the Chimera compilation process.
+
+### Requirements
+
+- CMake 3.22 or newer
+- zstd library (libzstd)
+- C++17 compatible compiler
+
+### Compilation
+
+```bash
+cmake -S <chimera-source> -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+The compiled `chimera-compress` executable will be in the build directory.
+
+### Static Build
+
+To build with statically linked zstd:
+
+```bash
+cmake -S <chimera-source> -B build -DBUILD_STATIC_ZSTD=ON
+cmake --build build
+```
+
+## Troubleshooting
+
+### "does not appear to be compressed"
+
+The map file is already uncompressed. Use the `compress` operation instead.
+
+### "appears to be compressed"
+
+The map file is already compressed. Use the `decompress` operation instead.
+
+### "is not a cache file"
+
+The file is not a valid Halo map file. Check that:
+- The file is a `.map` file
+- The file is not corrupted
+- The file size is at least 2048 bytes
+
+### "has an unknown version"
+
+The map uses an unsupported cache file version. Only retail (7), Custom Edition (609), and demo (6) versions are supported.
+
+### Decompression fails during gameplay
+
+Ensure you have enough:
+- **Disk space** - For temporary files (if not using maps in RAM)
+- **RAM** - For in-memory decompression (if maps in RAM is enabled)
+- **Permissions** - Write access to the Chimera folder
+
+## Best Practices
+
+1. **Keep backups** - Always keep uncompressed copies of your maps
+2. **Compress after editing** - Only compress finalized map files
+3. **Use maps in RAM** - Enable for better performance with compressed maps
+4. **Test after compression** - Verify maps work correctly after compression
+5. **Document compression** - Note which maps are compressed for easier management

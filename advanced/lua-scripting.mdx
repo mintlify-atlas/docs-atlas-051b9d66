@@ -1,0 +1,535 @@
+---
+title: Lua Scripting
+description: Advanced Lua scripting capabilities and event system
+---
+
+Chimera includes a powerful Lua scripting engine that allows you to extend and customize Halo's behavior. Scripts can respond to game events, modify game state, and create custom functionality.
+
+## Overview
+
+Chimera's Lua scripting system provides:
+
+- **Event callbacks** - React to game events like map loads, ticks, frames, and player spawns
+- **Game API** - Access and modify game state, objects, players, and tags
+- **File I/O** - Read and write files (global scripts only)
+- **Timers** - Schedule functions to run at specific intervals
+- **Two script types** - Global scripts (persistent) and map scripts (map-specific)
+
+## Script Types
+
+### Global Scripts
+
+Global scripts are loaded when Halo starts and remain active until the game exits or scripts are reloaded.
+
+**Location:**
+```
+%USERPROFILE%\Documents\My Games\Halo CE\chimera\lua\scripts\global\
+```
+
+**Characteristics:**
+- Persist across map changes
+- Can use file I/O operations
+- Not sandboxed
+- Ideal for persistent functionality
+
+**Example use cases:**
+- Custom HUD overlays
+- Statistics tracking
+- Server browser enhancements
+- Input remapping
+
+### Map Scripts
+
+Map scripts are loaded when a specific map loads and unload when the map changes.
+
+**Location:**
+```
+%USERPROFILE%\Documents\My Games\Halo CE\chimera\lua\scripts\map\<mapname>.lua
+```
+
+**Characteristics:**
+- Loaded when map loads
+- Unloaded when map changes
+- Can use file I/O operations
+- Not sandboxed
+- Map-specific functionality
+
+**Example:** `bloodgulch.lua` loads only when playing Blood Gulch.
+
+### Embedded Scripts
+
+Maps can contain embedded Lua scripts in their tag data.
+
+**Characteristics:**
+- Embedded in map file
+- Sandboxed (restricted I/O)
+- Loaded with map
+- Requires `load_embedded_lua=1` in chimera.ini (or map-specific flag)
+
+<Warning>
+  Embedded scripts are sandboxed and have restricted access to I/O operations for security. They cannot execute system commands or access arbitrary files.
+</Warning>
+
+Enable embedded scripts in `chimera.ini`:
+
+```ini
+[memory]
+load_embedded_lua=1
+```
+
+## Basic Script Structure
+
+### Minimal Script
+
+```lua
+-- Define the Chimera Lua API version
+clua_version = 2.042
+
+-- Called when map loads
+function OnMapLoad()
+    console_out("Map loaded!")
+end
+
+-- Register the callback
+set_callback("map load", "OnMapLoad")
+```
+
+### Script Metadata
+
+Chimera provides global variables in every script:
+
+```lua
+-- API version (define this!)
+clua_version = 2.042
+
+-- Provided by Chimera
+print(script_name)   -- "myscript.lua"
+print(script_type)   -- "global" or "map"
+print(sandboxed)     -- true or false
+print(build)         -- 1234 (commit count)
+print(full_build)    -- "1.0.0-1234-abc123"
+```
+
+## Event System
+
+Chimera's event system allows scripts to react to game events using callbacks.
+
+### Registering Callbacks
+
+```lua
+set_callback("event_name", "function_name", "priority")
+```
+
+**Parameters:**
+- `event_name` - Name of the event to listen for
+- `function_name` - Name of your callback function (or empty string to unregister)
+- `priority` - (Optional) "before", "default", "after", or "final"
+
+### Event Priorities
+
+Callbacks can be registered with different priorities:
+
+- `"before"` - Runs before default callbacks
+- `"default"` - Normal priority (default)
+- `"after"` - Runs after default callbacks
+- `"final"` - Runs last, cannot modify event data
+
+```lua
+set_callback("tick", "OnTick", "before")
+```
+
+### Available Events
+
+#### map_load
+
+Called when a map finishes loading.
+
+```lua
+function OnMapLoad()
+    console_out("Map: " .. get_map_name())
+end
+
+set_callback("map load", "OnMapLoad")
+```
+
+#### map_preload
+
+Called before a map loads.
+
+```lua
+function OnMapPreload()
+    console_out("Loading map...")
+end
+
+set_callback("map preload", "OnMapPreload")
+```
+
+#### tick
+
+Called every game tick (~30 times per second).
+
+```lua
+function OnTick()
+    -- Update game logic
+end
+
+set_callback("tick", "OnTick")
+```
+
+#### pretick
+
+Called before the game tick is processed.
+
+```lua
+function OnPretick()
+    -- Pre-tick logic
+end
+
+set_callback("pretick", "OnPretick")
+```
+
+#### frame
+
+Called every frame (as fast as your FPS).
+
+```lua
+local frame_count = 0
+
+function OnFrame()
+    frame_count = frame_count + 1
+end
+
+set_callback("frame", "OnFrame")
+```
+
+#### preframe
+
+Called before each frame is rendered.
+
+```lua
+function OnPreframe()
+    -- Pre-render logic
+end
+
+set_callback("preframe", "OnPreframe")
+```
+
+#### precamera
+
+Called before camera is updated. Can modify camera position and orientation.
+
+```lua
+function OnPrecamera(x, y, z, fov, vx, vy, vz, v2x, v2y, v2z)
+    -- Modify and return camera parameters
+    return x, y + 1, z, fov, vx, vy, vz, v2x, v2y, v2z
+end
+
+set_callback("precamera", "OnPrecamera")
+```
+
+**Parameters:**
+- `x, y, z` - Camera position
+- `fov` - Field of view
+- `vx, vy, vz` - Forward vector
+- `v2x, v2y, v2z` - Up vector
+
+**Returns:** Modified camera values (non-final priorities only)
+
+#### command
+
+Called when a console command is executed.
+
+```lua
+function OnCommand(command)
+    console_out("Command: " .. command)
+    -- Return false to block the command
+    return true
+end
+
+set_callback("command", "OnCommand")
+```
+
+**Returns:** 
+- `true` - Allow command
+- `false` - Block command
+- `nil` - Allow command (default)
+
+#### rcon_message
+
+Called when an RCON message is received.
+
+```lua
+function OnRconMessage(message)
+    console_out("RCON: " .. message)
+    return true
+end
+
+set_callback("rcon message", "OnRconMessage")
+```
+
+#### spawn
+
+Called when an object spawns.
+
+```lua
+function OnSpawn(object_id)
+    console_out("Object spawned: " .. object_id)
+end
+
+set_callback("spawn", "OnSpawn")
+```
+
+#### prespawn
+
+Called before an object spawns.
+
+```lua
+function OnPrespawn(object_id)
+    -- Modify object before spawn
+end
+
+set_callback("prespawn", "OnPrespawn")
+```
+
+#### unload
+
+Called when the script is being unloaded.
+
+```lua
+function OnUnload()
+    console_out("Cleaning up...")
+    -- Cleanup code here
+end
+
+set_callback("unload", "OnUnload")
+```
+
+## Timers
+
+Schedule functions to run at specific intervals.
+
+### Creating a Timer
+
+```lua
+function TimerCallback(arg1, arg2)
+    console_out("Timer fired: " .. arg1 .. ", " .. arg2)
+    return true  -- Return true to keep timer running
+end
+
+-- Create timer (1000ms interval)
+local timer_id = set_timer(1000, "TimerCallback", "hello", 42)
+```
+
+### Timer Return Values
+
+Timer callbacks should return:
+- `true` - Continue running the timer
+- `false` - Stop the timer (automatically removed)
+
+### Removing Timers
+
+```lua
+-- Stop a specific timer
+remove_timer(timer_id)
+```
+
+### One-Shot Timer
+
+```lua
+function OneShot()
+    console_out("One time only!")
+    return false  -- Don't repeat
+end
+
+set_timer(5000, "OneShot")  -- Runs once after 5 seconds
+```
+
+## Example Scripts
+
+### FPS Display
+
+```lua
+clua_version = 2.042
+
+local frame_count = 0
+local last_time = 0
+local fps = 0
+
+function OnFrame()
+    frame_count = frame_count + 1
+end
+
+function UpdateFPS()
+    local current_time = os.clock()
+    local elapsed = current_time - last_time
+    
+    if elapsed >= 1.0 then
+        fps = frame_count / elapsed
+        frame_count = 0
+        last_time = current_time
+        console_out(string.format("FPS: %.1f", fps))
+    end
+    
+    return true
+end
+
+set_callback("frame", "OnFrame")
+set_timer(1000, "UpdateFPS")
+last_time = os.clock()
+```
+
+### Player Join Monitor
+
+```lua
+clua_version = 2.042
+
+local known_players = {}
+
+function OnTick()
+    local player_count = get_player_count()
+    
+    for i = 0, player_count - 1 do
+        local player = get_player(i)
+        if player and not known_players[player.id] then
+            known_players[player.id] = true
+            console_out(player.name .. " joined the game")
+        end
+    end
+end
+
+set_callback("tick", "OnTick")
+```
+
+### Command Blocker
+
+```lua
+clua_version = 2.042
+
+local blocked_commands = {
+    "sv_cheats",
+    "sv_ban",
+    "sv_kick"
+}
+
+function OnCommand(command)
+    for _, blocked in ipairs(blocked_commands) do
+        if command:find(blocked) == 1 then
+            console_out("Command blocked: " .. blocked)
+            return false
+        end
+    end
+    return true
+end
+
+set_callback("command", "OnCommand")
+```
+
+### Custom Camera Shake
+
+```lua
+clua_version = 2.042
+
+local shake_intensity = 0
+
+function OnPrecamera(x, y, z, fov, vx, vy, vz, v2x, v2y, v2z)
+    if shake_intensity > 0 then
+        x = x + (math.random() - 0.5) * shake_intensity
+        y = y + (math.random() - 0.5) * shake_intensity
+        z = z + (math.random() - 0.5) * shake_intensity
+        shake_intensity = shake_intensity * 0.9
+    end
+    return x, y, z, fov, vx, vy, vz, v2x, v2y, v2z
+end
+
+function CauseShake(intensity)
+    shake_intensity = intensity or 0.5
+end
+
+set_callback("precamera", "OnPrecamera")
+```
+
+### Map-Specific Script
+
+```lua
+-- bloodgulch.lua
+clua_version = 2.042
+
+function OnMapLoad()
+    console_out("Welcome to Blood Gulch!")
+    console_out("Custom script loaded.")
+    
+    -- Blood Gulch specific tweaks
+    execute_script("sv_gravity 0.75")
+end
+
+function OnUnload()
+    console_out("Leaving Blood Gulch.")
+    execute_script("sv_gravity 1")
+end
+
+set_callback("map load", "OnMapLoad")
+set_callback("unload", "OnUnload")
+```
+
+## API Version Compatibility
+
+Always declare your API version:
+
+```lua
+clua_version = 2.042
+```
+
+Chimera will warn you if:
+- Your script uses a newer API version than supported
+- Your script uses an older API version (may have compatibility issues)
+- No API version is declared
+
+## Best Practices
+
+1. **Always declare `clua_version`** - Ensures compatibility
+2. **Use appropriate script types** - Global for persistent, map for specific
+3. **Clean up in unload** - Remove timers, reset state
+4. **Handle nil values** - Game data may not always be available
+5. **Avoid heavy operations in frame callbacks** - Can impact FPS
+6. **Use timers instead of tick counting** - More reliable
+7. **Test thoroughly** - Scripts can crash the game if buggy
+8. **Comment your code** - Future you will appreciate it
+
+## Debugging
+
+### Console Output
+
+```lua
+console_out("Debug: " .. tostring(value))
+```
+
+### Error Messages
+
+Lua errors are printed to the console with stack traces. Check the console after script loading to see if any errors occurred.
+
+### Reloading Scripts
+
+Use the console command to reload scripts:
+
+```
+chimera_lua_reload
+```
+
+This reloads all global scripts without restarting the game.
+
+## Script Locations Summary
+
+| Type | Location | Sandboxed |
+|------|----------|----------|
+| Global | `chimera/lua/scripts/global/*.lua` | No |
+| Map | `chimera/lua/scripts/map/<mapname>.lua` | No |
+| Embedded | Inside map file tag data | Yes |
+| Modules | `chimera/lua/modules/*.lua` | - |
+
+## Security Notes
+
+- **Global and map scripts run with full permissions** - Be careful with scripts from untrusted sources
+- **Embedded scripts are sandboxed** - Limited I/O access for safety
+- **Scripts can execute console commands** - Including potentially dangerous ones
+- **Scripts have file system access** - Global/map scripts can read/write files
+- **Always review scripts before running** - Especially from unknown sources

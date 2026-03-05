@@ -1,0 +1,103 @@
+---
+title: 'Commands Overview'
+description: 'Console commands available in Chimera for Halo: Combat Evolved'
+icon: 'terminal'
+---
+
+Chimera provides a comprehensive set of console commands to customize and enhance your Halo: Combat Evolved experience. Commands are stored in `preferences.txt` in the chimera folder and can be executed from the in-game console.
+
+## Command Categories
+
+Commands are organized into the following categories:
+
+<CardGroup cols={2}>
+  <Card title="Visual" icon="eye" href="/commands/visual">
+    Field of view, widescreen fixes, FPS display, anisotropic filtering, and other visual enhancements
+  </Card>
+  
+  <Card title="Controller" icon="gamepad" href="/commands/controller">
+    Aim assist, deadzones, diagonal movement, and gamepad configuration options
+  </Card>
+  
+  <Card title="Gameplay" icon="play" href="/commands/gameplay">
+    Spectate mode, teleportation, devmode, and gameplay modifications
+  </Card>
+  
+  <Card title="Network" icon="network-wired" href="/commands/network">
+    Server bookmarks, connection history, and network-related features
+  </Card>
+  
+  <Card title="Debug" icon="bug" href="/commands/debug">
+    Performance budgets, coordinates display, player information, and debugging tools
+  </Card>
+  
+  <Card title="Spectator" icon="video" href="/commands/spectator">
+    Spectate controls and team-only viewing options
+  </Card>
+</CardGroup>
+
+## Command Syntax
+
+Most commands follow a standard syntax:
+
+```bash
+chimera_<command_name> [parameters]
+```
+
+### Boolean Commands
+
+Many commands accept boolean values:
+
+```bash
+chimera_show_fps true   # Enable
+chimera_show_fps false  # Disable
+chimera_show_fps 1      # Enable (numeric)
+chimera_show_fps 0      # Disable (numeric)
+```
+
+### Numeric Parameters
+
+Some commands accept numeric values:
+
+```bash
+chimera_fov 90          # Set field of view to 90 degrees
+chimera_af 16           # Set anisotropic filtering to 16x
+```
+
+### Multi-parameter Commands
+
+Certain commands require multiple parameters:
+
+```bash
+chimera_console_prompt_color 255 0 0  # Set console color to red (RGB)
+chimera_mouse_sensitivity 2 1         # Set horizontal and vertical sensitivity
+```
+
+## Quick Setup Commands
+
+### Block All Bullshit
+
+Chimera provides a convenient command to disable multiple annoying features at once:
+
+```bash
+chimera_block_all_bullshit
+```
+
+This command automatically runs:
+- `chimera_block_gametype_indicator 1`
+- `chimera_block_gametype_rules 1`
+- `chimera_block_hold_f1 1`
+- `chimera_block_loading_screen 1`
+- `chimera_block_mouse_acceleration 1`
+
+## Persistent Settings
+
+Commands you execute are automatically saved to `preferences.txt` in the chimera folder. This ensures your settings persist between game sessions.
+
+## Hotkeys
+
+You can bind commands to keyboard shortcuts using the hotkeys feature in `chimera.ini`. See the included configuration file for examples.
+
+## Next Steps
+
+Explore the command categories above to find specific commands for your needs, or check out the [chimera.ini configuration](/configuration/chimera-ini) for additional customization options.

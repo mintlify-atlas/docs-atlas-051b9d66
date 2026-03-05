@@ -1,0 +1,200 @@
+---
+title: 'Spectator Commands'
+description: 'Commands for spectating players and controlling spectator mode'
+icon: 'video'
+---
+
+Spectator commands allow you to watch other players during gameplay, useful for observing matches, creating content, or waiting to respawn.
+
+## Basic Spectating
+
+### chimera_spectate
+
+Spectate a specific player by their index.
+
+<ParamField path="index" type="number" required>
+  Player index to spectate. Use `0` to stop spectating.
+</ParamField>
+
+```bash
+chimera_spectate 1   # Spectate player 1
+chimera_spectate 5   # Spectate player 5
+chimera_spectate 0   # Stop spectating
+```
+
+<Tip>
+Use `chimera_player_list` to see all player indices before spectating.
+</Tip>
+
+## Quick Navigation
+
+For easier spectating, Chimera provides hotkey-friendly commands to cycle through players.
+
+### chimera_spectate_next
+
+Spectate the next player in the list. Ideal for binding to a hotkey.
+
+```bash
+chimera_spectate_next
+```
+
+<Info>
+This command is designed for use with hotkeys. Add to `chimera.ini`:
+```ini
+[hotkey.spec_next]
+key = E
+command = chimera_spectate_next
+```
+</Info>
+
+### chimera_spectate_previous
+
+Spectate the previous player in the list. Also called `chimera_spectate_back`.
+
+```bash
+chimera_spectate_previous
+chimera_spectate_back  # Alternative name
+```
+
+<Info>
+This command is designed for use with hotkeys. Add to `chimera.ini`:
+```ini
+[hotkey.spec_prev]
+key = Q
+command = chimera_spectate_previous
+```
+</Info>
+
+## Team-Only Spectating
+
+### chimera_spectate_team_only
+
+Restrict `chimera_spectate_next` and `chimera_spectate_previous` to only cycle through teammates.
+
+<ParamField path="enabled" type="boolean" required>
+  true to spectate team members only, false to spectate all players
+</ParamField>
+
+```bash
+chimera_spectate_team_only true   # Only spectate teammates
+chimera_spectate_team_only false  # Spectate everyone
+```
+
+<Note>
+This setting has no effect in free-for-all gametypes where there are no teams.
+</Note>
+
+## Recommended Hotkey Setup
+
+For the best spectating experience, configure hotkeys in `chimera.ini`:
+
+```ini
+[hotkey.spectate_next]
+key = E
+command = chimera_spectate_next
+
+[hotkey.spectate_previous]
+key = Q
+command = chimera_spectate_previous
+
+[hotkey.spectate_stop]
+key = F
+command = chimera_spectate 0
+```
+
+This setup allows you to:
+- Press `E` to spectate the next player
+- Press `Q` to spectate the previous player
+- Press `F` to stop spectating
+
+## Use Cases
+
+<AccordionGroup>
+  <Accordion title="Content Creation">
+    Spectator mode is perfect for:
+    - Recording gameplay from multiple perspectives
+    - Capturing cinematic footage
+    - Creating highlight reels
+    - Broadcasting matches
+    
+    Combine with `chimera_block_server_ip true` if streaming to hide the server IP.
+  </Accordion>
+  
+  <Accordion title="Competitive Observation">
+    Watch competitive matches by:
+    - Using `chimera_spectate_team_only true` to follow one team
+    - Quickly switching between players with next/previous commands
+    - Monitoring specific player strategies
+    
+    Tip: Bind spectate commands to easily accessible keys for rapid switching.
+  </Accordion>
+  
+  <Accordion title="Learning & Analysis">
+    Improve your gameplay by:
+    - Spectating skilled players to learn techniques
+    - Analyzing different playstyles
+    - Understanding map control and positioning
+    - Studying weapon effectiveness
+  </Accordion>
+  
+  <Accordion title="Waiting for Respawn">
+    In custom gametypes with long respawn times:
+    - Spectate teammates to stay engaged
+    - Scout enemy positions for when you respawn
+    - Communicate enemy locations to your team
+  </Accordion>
+</AccordionGroup>
+
+## Spectating with Other Commands
+
+Combine spectator commands with other Chimera features for enhanced functionality:
+
+### Enhanced Viewing
+```bash
+chimera_fov 110v              # Wider field of view
+chimera_show_fps true         # Monitor performance
+chimera_block_server_ip true  # Hide IP for streaming
+```
+
+### Team Spectating Setup
+```bash
+chimera_spectate_team_only true  # Only watch teammates
+chimera_spectate_next             # Start spectating first teammate
+```
+
+### Quick Spectate-and-Return
+```bash
+chimera_spectate 3     # Watch player 3
+# ... watch for a while ...
+chimera_spectate 0     # Return to your own view
+```
+
+## Limitations
+
+<Warning>
+Spectator mode limitations:
+- You cannot spectate while actively playing (must be dead or observing)
+- Some custom gametypes may restrict spectating
+- Server settings may limit spectator capabilities
+- You cannot control the player you're spectating
+</Warning>
+
+## Tips for Smooth Spectating
+
+<Steps>
+  <Step title="List Players First">
+    Run `chimera_player_list` to see who's in the game and get their indices.
+  </Step>
+  
+  <Step title="Set Up Hotkeys">
+    Configure `chimera.ini` with convenient spectate hotkeys before joining matches.
+  </Step>
+  
+  <Step title="Configure Team Filter">
+    Decide if you want team-only spectating and set `chimera_spectate_team_only` accordingly.
+  </Step>
+  
+  <Step title="Adjust Visual Settings">
+    Set your FoV and visual preferences before spectating for the best viewing experience.
+  </Step>
+</Steps>

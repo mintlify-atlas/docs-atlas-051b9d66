@@ -1,0 +1,214 @@
+---
+title: "INI Settings Overview"
+description: "Complete reference for chimera.ini configuration file"
+---
+
+## About chimera.ini
+
+The `chimera.ini` file provides additional configuration for Chimera beyond console commands. This file is NOT automatically generated, so you are responsible for keeping it up-to-date. Using the INI file is optional unless you want to take advantage of features configured through it.
+
+<Note>
+You can get a fresh copy of chimera.ini from the [Chimera repository](https://github.com/SnowyMouse/chimera/).
+</Note>
+
+## File Format
+
+### Encoding
+
+<Warning>
+The chimera.ini file **MUST** be encoded using UTF-8. Other encodings will not work.
+</Warning>
+
+### Comments
+
+Lines that begin with a semicolon `;` are comments and are ignored by the parser. Comments are also used to "comment out" settings:
+
+```ini
+;setting_name=value
+```
+
+Removing the semicolon before `setting_name` ("uncommenting" the line) will activate the setting.
+
+## Configuration Sections
+
+The chimera.ini file is organized into the following sections:
+
+<CardGroup cols={2}>
+  <Card title="Halo Settings" icon="gamepad" href="/configuration/halo-settings">
+    Game initialization, paths, ports, and core Halo settings
+  </Card>
+  <Card title="Video Settings" icon="display" href="/configuration/video-settings">
+    Resolution, refresh rate, vsync, windowed mode, and graphics options
+  </Card>
+  <Card title="Chat Settings" icon="comments" href="/configuration/chat-settings">
+    Custom chat, server messages, console, and messaging display
+  </Card>
+  <Card title="Font Settings" icon="font" href="/configuration/font-settings">
+    Override game fonts with custom system fonts
+  </Card>
+  <Card title="Controller Settings" icon="gamepad-modern" href="/configuration/controller-settings">
+    Gamepad configuration and button mapping
+  </Card>
+  <Card title="Hotkeys" icon="keyboard" href="/configuration/hotkeys">
+    Function keys and keyboard shortcuts for commands
+  </Card>
+</CardGroup>
+
+## Additional Sections
+
+### Error Handling
+
+Control how Chimera handles errors:
+
+<ParamField path="suppress_fatal_errors" type="boolean" default="0">
+  Set to `1` to not show any error boxes created by Chimera.
+</ParamField>
+
+<ParamField path="show_segmentation_fault" type="boolean" default="0">
+  Set to `1` to show segmentation fault errors.
+</ParamField>
+
+### Scoreboard
+
+Customize the scoreboard appearance:
+
+<ParamField path="font" type="string" default="small">
+  Font to use for the scoreboard. Options: `smaller`, `small`, `large`, `console`, `system`
+</ParamField>
+
+<ParamField path="fade_time" type="number" default="0.5">
+  Fade time in seconds. `0.5` is default, `0` is instant.
+</ParamField>
+
+```ini
+[scoreboard]
+font=small
+fade_time=0.5
+```
+
+### Player Names
+
+Customize names displayed when looking at players:
+
+<ParamField path="font" type="string" default="small">
+  Font to use for player names. Options: `smaller`, `small`, `large`, `console`, `system`
+</ParamField>
+
+```ini
+[name]
+font=small
+```
+
+### Server List
+
+Configure server list behavior:
+
+<ParamField path="auto_query" type="boolean" default="1">
+  Enable automatically getting the server list on open.
+</ParamField>
+
+<ParamField path="master_server_list" type="string">
+  Master server hostname for server list queries.
+</ParamField>
+
+<ParamField path="master_server_key" type="string">
+  Master server key hostname.
+</ParamField>
+
+<ParamField path="master_server_nat_primary" type="string">
+  Primary NAT negotiation server.
+</ParamField>
+
+<ParamField path="master_server_nat_secondary" type="string">
+  Secondary NAT negotiation server.
+</ParamField>
+
+```ini
+[server_list]
+auto_query=1
+;master_server_list=s1.master.hosthpc.com
+;master_server_key=s1.ms01.hosthpc.com
+```
+
+### Maps
+
+Map compatibility settings:
+
+<ParamField path="map_compatibility_list" type="boolean" default="1">
+  Enable/disable the map compatibility list. Used to support legacy maps that depend on Gearbox renderer regressions and legacy Chimera hacks.
+</ParamField>
+
+```ini
+[maps]
+map_compatibility_list=1
+```
+
+### Memory
+
+Map loading and memory settings:
+
+<ParamField path="enable_map_memory_buffer" type="boolean" default="0">
+  Load maps directly into RAM rather than use temporary files. Requires LAA-patched haloce.exe.
+</ParamField>
+
+<ParamField path="map_size" type="number" default="1024">
+  Size of buffer (in MiB) to allocate for both the UI and one non-UI map.
+</ParamField>
+
+<ParamField path="benchmark" type="boolean" default="0">
+  Show the time it took to decompress maps.
+</ParamField>
+
+<ParamField path="download_font" type="string" default="small">
+  Font to use when downloading maps. Options: `smaller`, `small`, `large`, `console`, `system`
+</ParamField>
+
+<ParamField path="download_template" type="string">
+  URL template used to download maps. Supports RFC 3986 URLs with placeholders:
+  - `{map}` - map name
+  - `{game}` - game type ("halor" for PC, "halom" for CE, "halod" for trial)
+  - `{server}` - current server's IP address
+  - `{password}` - server password
+  - `{mirror<x,y,...>}` - comma-separated mirror values
+</ParamField>
+
+<ParamField path="download_retail_maps" type="boolean" default="0">
+  Enable downloading of retail (HaloMD / Halo PC) maps. OFF by default due to potential incompatibility.
+</ParamField>
+
+<ParamField path="load_embedded_lua" type="boolean" default="0">
+  Enable loading Lua scripts embedded in maps. No effect on Halo Trial.
+</ParamField>
+
+```ini
+[memory]
+map_size=1024
+download_font=small
+load_embedded_lua=0
+```
+
+<Warning>
+Ensure you have an English copy of retail Halo PC bitmaps.map and sounds.map before enabling `download_retail_maps`. Incompatible maps will result in corrupt assets and extremely loud sounds.
+</Warning>
+
+### Debug
+
+Advanced debug settings:
+
+<ParamField path="use_external_pixel_shader_collection" type="boolean" default="0">
+  Use pixel shader collection from the "shaders" folder rather than built-in collections.
+</ParamField>
+
+<ParamField path="use_external_vertex_shader_collection" type="boolean" default="0">
+  Use vertex shader collection from the "shaders" folder rather than built-in collections.
+</ParamField>
+
+```ini
+[debug]
+use_external_pixel_shader_collection=0
+use_external_vertex_shader_collection=0
+```
+
+<Warning>
+Don't modify debug settings unless you know what you're doing.
+</Warning>

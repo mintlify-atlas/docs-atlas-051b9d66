@@ -1,0 +1,229 @@
+---
+title: "Controller Settings"
+description: "Configure gamepad support and button mappings"
+---
+
+## Overview
+
+The `[controller]` section allows you to configure gamepad support for Halo, including custom button mappings and axis configurations.
+
+## Enable Controller Support
+
+<ParamField path="enabled" type="boolean" default="0">
+  Enable controller support. Must be set to `1` to use gamepad features.
+</ParamField>
+
+```ini
+[controller]
+enabled=1
+```
+
+## Button Mappings
+
+You can customize button and axis labels for your controller. The format follows these patterns:
+
+### Button Format
+
+<ParamField path="button_N" type="string">
+  Label for button N, where N is the button number.
+</ParamField>
+
+```ini
+button_1=Button 1
+button_2=Button 2
+```
+
+### Axis Format
+
+<ParamField path="axis_N_p" type="string">
+  Label for axis N positive direction, where N is the axis number.
+</ParamField>
+
+<ParamField path="axis_N_n" type="string">
+  Label for axis N negative direction, where N is the axis number.
+</ParamField>
+
+```ini
+axis_2_n=Axis 2 (-)
+axis_3_p=Axis 3 (+)
+```
+
+### POV Hat Format
+
+<ParamField path="pov_N_direction" type="string">
+  Label for POV hat N in the specified direction (n, e, s, w for north, east, south, west).
+</ParamField>
+
+```ini
+pov_4_e=POV 4 (East)
+pov_1_n=POV 1 (North)
+```
+
+## Example Configuration
+
+Here's an example configuration with various button types:
+
+```ini
+[controller]
+enabled=1
+
+# Face buttons
+button_1=A Button
+button_2=B Button
+button_3=X Button
+button_4=Y Button
+
+# Shoulder buttons
+button_5=Left Bumper
+button_6=Right Bumper
+
+# Analog sticks
+axis_1_p=Left Stick Right
+axis_1_n=Left Stick Left
+axis_2_p=Left Stick Down
+axis_2_n=Left Stick Up
+axis_3_p=Right Stick Right
+axis_3_n=Right Stick Left
+axis_4_p=Right Stick Down
+axis_4_n=Right Stick Up
+
+# Triggers
+axis_5_p=Left Trigger
+axis_6_p=Right Trigger
+
+# D-Pad
+pov_1_n=D-Pad Up
+pov_1_e=D-Pad Right
+pov_1_s=D-Pad Down
+pov_1_w=D-Pad Left
+```
+
+## Premade Controller Configs
+
+<Info>
+Chimera provides premade controller configurations for popular controllers. You can find them at:
+
+[github.com/SnowyMouse/chimera/tree/master/controller_config](https://github.com/SnowyMouse/chimera/tree/master/controller_config)
+</Info>
+
+Instead of manually configuring buttons, you can:
+
+1. Download a premade config for your controller
+2. Copy the settings from that config into your `chimera.ini`
+3. Adjust as needed
+
+## Common Controller Types
+
+### Xbox Controller
+
+```ini
+[controller]
+enabled=1
+
+# Standard Xbox layout
+button_1=A
+button_2=B
+button_3=X
+button_4=Y
+button_5=LB
+button_6=RB
+button_7=Back
+button_8=Start
+button_9=Left Stick Click
+button_10=Right Stick Click
+
+# Left stick
+axis_1_p=Left Stick Right
+axis_1_n=Left Stick Left
+axis_2_p=Left Stick Down
+axis_2_n=Left Stick Up
+
+# Right stick
+axis_3_p=Right Stick Right
+axis_3_n=Right Stick Left
+axis_4_p=Right Stick Down
+axis_4_n=Right Stick Up
+
+# Triggers
+axis_5_p=LT
+axis_6_p=RT
+
+# D-Pad
+pov_1_n=Up
+pov_1_e=Right
+pov_1_s=Down
+pov_1_w=Left
+```
+
+### PlayStation Controller
+
+```ini
+[controller]
+enabled=1
+
+# PlayStation layout
+button_1=Cross
+button_2=Circle
+button_3=Square
+button_4=Triangle
+button_5=L1
+button_6=R1
+button_7=Select
+button_8=Start
+button_9=L3
+button_10=R3
+
+# Left stick
+axis_1_p=Left Stick Right
+axis_1_n=Left Stick Left
+axis_2_p=Left Stick Down
+axis_2_n=Left Stick Up
+
+# Right stick
+axis_3_p=Right Stick Right
+axis_3_n=Right Stick Left
+axis_4_p=Right Stick Down
+axis_4_n=Right Stick Up
+
+# Triggers
+axis_5_p=L2
+axis_6_p=R2
+
+# D-Pad
+pov_1_n=Up
+pov_1_e=Right
+pov_1_s=Down
+pov_1_w=Left
+```
+
+## Testing Your Configuration
+
+1. Enable controller support: `enabled=1`
+2. Add your button mappings
+3. Save `chimera.ini`
+4. Launch Halo
+5. Test buttons in-game to verify mappings
+6. Adjust as needed
+
+<Tip>
+If you're unsure about button numbers, start with a premade config from the Chimera repository and modify it to match your preferences.
+</Tip>
+
+## Troubleshooting
+
+### Controller Not Detected
+
+- Ensure `enabled=1` is set in the `[controller]` section
+- Verify your controller is connected before launching Halo
+- Try a premade config from the Chimera repository
+
+### Wrong Button Mappings
+
+- Button numbers may vary between controllers
+- Use a controller testing tool to identify button numbers
+- Reference premade configs for your controller type
+
+### Axis Inversion
+
+- If an axis is inverted, swap the `_p` and `_n` labels
+- For example, swap `axis_2_p` with `axis_2_n`

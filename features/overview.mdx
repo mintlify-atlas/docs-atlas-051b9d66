@@ -1,0 +1,126 @@
+---
+title: Features Overview
+description: "A comprehensive overview of Chimera's features and enhancements for Halo Combat Evolved PC"
+icon: sparkles
+---
+
+Chimera provides extensive features and enhancements to Halo: Combat Evolved PC. These features are designed to fix bugs, improve performance, enhance visuals, and provide modern functionality that should have been in the PC release.
+
+## Feature Philosophy
+
+To preserve the base game experience as much as possible, most features are **not turned on by default**. The ones that are enabled by default only exist to enhance or fix the game without changing core gameplay.
+
+<Note>
+Chimera is designed to make Halo PC what it should have been - a proper, polished PC port with modern features and bug fixes.
+</Note>
+
+## Core Feature Categories
+
+<CardGroup cols={2}>
+  <Card title="Interpolation" icon="waveform" href="/features/interpolation">
+    Smooth object movement beyond 30 FPS tick rate limitation
+  </Card>
+  
+  <Card title="Bug Fixes" icon="wrench" href="/features/bug-fixes">
+    Fixes for camera shake, descope, checkpoints, and many more issues
+  </Card>
+  
+  <Card title="Visual Enhancements" icon="eye" href="/features/visual-enhancements">
+    Shader fixes, improved rendering, and visual quality improvements
+  </Card>
+  
+  <Card title="Custom Chat" icon="comments" href="/features/custom-chat">
+    Replacement for the broken Keystone chat system
+  </Card>
+  
+  <Card title="Map Support" icon="map" href="/features/map-support">
+    Custom Edition maps on retail, compressed maps, and more
+  </Card>
+  
+  <Card title="Lua Scripting" icon="code" href="/features/lua-scripting">
+    Powerful Lua scripting API for advanced customization
+  </Card>
+</CardGroup>
+
+## Passive Features
+
+These features are **always enabled** and provide fundamental improvements:
+
+- **Interpolation** - Smooth movement at high frame rates
+- **Limit Increases** - BSP polygon limit (32767), visible objects (1024), draw distance (2250 wu)
+- **Compressed Maps** - Support for zstd-compressed map files
+- **Fast Loading** - CRC32 on map load instead of startup
+- **Fast Server Listing** - Improved master server query performance
+- **128 MiB Map Leak Fix** - Prevents file descriptor leaks with large maps
+- **Model LOD Fix** - Prevents "4K headless chief" glitch
+- **FOV Fix** - Consistent FOV across different resolutions
+- **Custom Chat** - Stable replacement for crashy Keystone chat
+
+## Configurable Features
+
+Many features can be customized through:
+
+<AccordionGroup>
+  <Accordion title="chimera.ini Configuration">
+    The `chimera.ini` file provides extensive customization options including:
+    - Video mode settings (resolution, refresh rate, vsync)
+    - Custom chat appearance and behavior
+    - Font overrides with system fonts
+    - Memory settings for map loading
+    - Controller configuration
+    - Hotkey bindings
+  </Accordion>
+  
+  <Accordion title="Console Commands">
+    Chimera provides over 60 console commands starting with `chimera_` prefix:
+    - Field of view adjustment
+    - Visual toggles and tweaks
+    - Quality of life features
+    - Multiplayer enhancements
+    - Debugging tools
+  </Accordion>
+</AccordionGroup>
+
+## Performance Impact
+
+Most features have **minimal to zero performance impact**:
+
+- Limit increases only affect performance if maps exceed the original limits
+- Interpolation is highly optimized and runs on modern hardware with negligible overhead
+- Optional features can be disabled if needed
+
+<Warning>
+While Chimera isn't too taxing on modern systems, it can make Halo harder to run on extremely ancient hardware.
+</Warning>
+
+## Compatibility
+
+Chimera works with:
+
+- **Halo PC (Retail)** - Full support
+- **Halo Custom Edition** - Full support  
+- **Halo Trial** - Full support
+
+<Tip>
+Chimera can enable Custom Edition map support on retail Halo PC by adding `custom_bitmaps.map`, `custom_loc.map`, and `custom_sounds.map` to your maps folder.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/getting-started/installation">
+    Get started with installing Chimera
+  </Card>
+  
+  <Card title="Configuration" icon="gear" href="/configuration/chimera-ini">
+    Learn how to configure Chimera
+  </Card>
+  
+  <Card title="Commands" icon="terminal" href="/commands/overview">
+    Explore available console commands
+  </Card>
+  
+  <Card title="Lua Scripting" icon="code" href="/features/lua-scripting">
+    Extend functionality with Lua scripts
+  </Card>
+</CardGroup>

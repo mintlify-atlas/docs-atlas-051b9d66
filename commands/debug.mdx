@@ -1,0 +1,240 @@
+---
+title: 'Debug Commands'
+description: 'Commands for performance monitoring and debugging information'
+icon: 'bug'
+---
+
+Debug commands provide performance metrics, player information, and diagnostic tools to help troubleshoot issues and monitor game state.
+
+## Performance Monitoring
+
+### chimera_budget
+
+Display various engine budgets including object limits and BSP polygon counts.
+
+<ParamField path="enabled" type="boolean">
+  true to show budget overlay, false to hide
+</ParamField>
+
+```bash
+chimera_budget true
+```
+
+<Info>
+The budget display shows:
+- Object limit usage (out of 1024 with Chimera)
+- BSP polygon limit (out of 32767 with Chimera)
+- Other engine resource usage
+</Info>
+
+<Accordion title="Understanding Budget Limits">
+  Chimera increases several engine limits:
+  - **BSP polygon limit**: Boosted to 32,767 (from 16,384)
+  - **Visible object limit**: Boosted to 1,024 (from 512)
+  - **Draw distance**: Increased to 2,250 world units (~6.86 km)
+  
+  Unless a map exceeds these limits, there's no performance impact. If limits are exceeded without Chimera, maps will look incorrect or be unplayable.
+</Accordion>
+
+### chimera_show_fps
+
+Display real-time frames per second counter.
+
+<ParamField path="enabled" type="boolean">
+  true to show FPS, false to hide
+</ParamField>
+
+```bash
+chimera_show_fps true
+```
+
+<Note>
+This is also documented in Visual Commands but included here for completeness as a debugging tool.
+</Note>
+
+## Position & Coordinates
+
+### chimera_show_coordinates
+
+Display your current in-game X, Y, Z coordinates.
+
+<ParamField path="enabled" type="boolean">
+  true to show coordinates, false to hide
+</ParamField>
+
+```bash
+chimera_show_coordinates true
+```
+
+<Tip>
+Useful for:
+- Creating custom teleport points
+- Mapping locations for scripts
+- Bug reporting with specific locations
+- Creating waypoints for mods
+</Tip>
+
+## Player Information
+
+### chimera_player_list
+
+List all players with their indices.
+
+```bash
+chimera_player_list
+```
+
+<Info>
+Shows each player's index number, which is used by commands like `chimera_teleport`, `chimera_spectate`, and `chimera_player_info`.
+</Info>
+
+### chimera_player_info
+
+Display detailed information about a specific player.
+
+<ParamField path="player" type="number" required>
+  Player index from `chimera_player_list`
+</ParamField>
+
+```bash
+chimera_player_info 1   # Show info for player 1
+chimera_player_info 5   # Show info for player 5
+```
+
+<Accordion title="Information Displayed">
+  Player info typically includes:
+  - Player name
+  - Team assignment
+  - Score/kills/deaths
+  - Ping (if in multiplayer)
+  - Connection status
+  - Player index
+</Accordion>
+
+## Console Customization
+
+### chimera_console_prompt_color
+
+Set the console input prompt color for better visibility.
+
+<ParamField path="red" type="number">
+  Red component (0-255)
+</ParamField>
+
+<ParamField path="green" type="number">
+  Green component (0-255)
+</ParamField>
+
+<ParamField path="blue" type="number">
+  Blue component (0-255)
+</ParamField>
+
+```bash
+chimera_console_prompt_color 0 255 0      # Bright green
+chimera_console_prompt_color 255 128 0    # Orange
+chimera_console_prompt_color 128 128 255  # Light blue
+```
+
+<Note>
+This is also documented in Visual Commands but useful for debugging to make console input more visible.
+</Note>
+
+## Script Debugging
+
+### Lua Script Commands
+
+Chimera supports Lua scripting with scripts that can be reloaded without restarting the game.
+
+```bash
+chimera_script_reload  # Reload global scripts
+```
+
+<Info>
+Lua scripts are loaded from:
+- **Global folder**: Loaded on startup, remain permanently loaded
+- **Map folder**: Loaded when a map loads, unloaded when the map unloads
+- **Embedded in maps**: Can be enabled via `chimera.ini`
+</Info>
+
+<Warning>
+The `chimera_script_reload` command is available if Chimera includes script management. Check your version's documentation for exact command names.
+</Warning>
+
+## Developer Mode
+
+### chimera_devmode
+
+Enable developer mode for access to additional debugging commands.
+
+<ParamField path="enabled" type="boolean">
+  true to enable devmode, false to disable
+</ParamField>
+
+```bash
+chimera_devmode true
+```
+
+<Accordion title="Devmode Benefits">
+  When enabled, you gain access to:
+  - Additional console commands
+  - Developer-only features
+  - Extended debugging information
+  
+  Unlike Halo's built-in devmode:
+  - ✅ Doesn't block multiplayer access
+  - ✅ No command line arguments required
+  - ✅ Can be toggled on/off in-game
+</Accordion>
+
+## Performance Testing
+
+### Using Budget & FPS Together
+
+For comprehensive performance monitoring:
+
+```bash
+chimera_budget true
+chimera_show_fps true
+chimera_show_coordinates true
+```
+
+This combination helps identify:
+- Performance bottlenecks (FPS drops)
+- Areas with high object density (budget usage)
+- Problematic map locations (coordinates)
+
+## Troubleshooting Tips
+
+<CardGroup cols={2}>
+  <Card title="Low FPS Issues" icon="gauge-high">
+    1. Enable `chimera_budget` to check object limits
+    2. Use `chimera_show_fps` to monitor frame rate
+    3. Check if specific areas cause drops using `chimera_show_coordinates`
+    4. Consider lowering `chimera_af` or disabling `chimera_model_detail`
+  </Card>
+  
+  <Card title="Multiplayer Issues" icon="network-wired">
+    1. Use `chimera_player_list` to verify all players are connected
+    2. Check specific player info with `chimera_player_info`
+    3. Use `chimera_show_coordinates` to verify teleport positions
+    4. Enable `chimera_devmode` for extended diagnostics
+  </Card>
+</CardGroup>
+
+## Map Development
+
+These commands are particularly useful for map creators:
+
+```bash
+# Setup for map development
+chimera_devmode true
+chimera_show_coordinates true
+chimera_budget true
+chimera_show_fps true
+```
+
+This configuration provides:
+- Real-time position data for placing objects
+- Budget monitoring to prevent exceeding limits
+- Performance feedback for optimization
+- Developer commands for testing
