@@ -1,0 +1,119 @@
+{
+  "projectType": "general",
+  "projectName": "Chimera",
+  "projectDescription": "The ultimate enhancement mod for Halo: Combat Evolved PC with bug fixes, visual improvements, and extended features",
+  "theme": "aspen",
+  "primaryColor": "#42f642",
+  "lightColor": "#296429",
+  "darkColor": "#0a170a",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "installation",
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/overview",
+              "features/interpolation",
+              "features/bug-fixes",
+              "features/visual-enhancements",
+              "features/custom-chat",
+              "features/map-support",
+              "features/lua-scripting"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/ini-settings",
+              "configuration/halo-settings",
+              "configuration/video-settings",
+              "configuration/controller-settings",
+              "configuration/chat-settings",
+              "configuration/font-settings",
+              "configuration/hotkeys"
+            ]
+          },
+          {
+            "group": "Advanced",
+            "pages": [
+              "advanced/custom-edition-maps",
+              "advanced/compressed-maps",
+              "advanced/map-downloading",
+              "advanced/lua-scripting",
+              "advanced/compilation"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Command Reference",
+        "groups": [
+          {
+            "group": "Commands",
+            "pages": [
+              "commands/overview",
+              "commands/visual",
+              "commands/controller",
+              "commands/gameplay",
+              "commands/network",
+              "commands/debug",
+              "commands/spectator"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "faq",
+              "troubleshooting",
+              "compatibility"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Object interpolation beyond 30 FPS",
+    "60+ bug fixes for PC port issues",
+    "Custom Edition map support on retail",
+    "Compressed map support with zstd",
+    "Lua scripting system",
+    "Enhanced custom chat system",
+    "Automatic map downloading",
+    "Controller support with aim assist",
+    "Extensive visual fixes and enhancements",
+    "60+ console commands for customization"
+  ],
+  "publicApiSurface": [
+    "chimera_fov - Field of view control",
+    "chimera_aim_assist - Controller aim assist",
+    "chimera_block_mouse_acceleration - Input control",
+    "chimera_show_fps - Performance display",
+    "chimera_widescreen_fix - Aspect ratio fixes",
+    "chimera_interpolate - Frame interpolation",
+    "chimera_spectate - Spectator mode",
+    "chimera_bookmark_add - Server bookmarks",
+    "chimera_devmode - Developer mode",
+    "chimera_teleport - Position control",
+    "chimera_budget - Resource budgets",
+    "chimera_af - Anisotropic filtering",
+    "chimera_throttle_fps - Frame rate limiting",
+    "chimera_uncap_cinematic - Cinematic FPS",
+    "chimera_chat_block_ips - Privacy controls",
+    "Lua event system - Custom scripting",
+    "INI configuration - Persistent settings",
+    "Custom font loading - Typography control",
+    "Video mode override - Display settings",
+    "Controller configuration - Input mapping"
+  ]
+}
