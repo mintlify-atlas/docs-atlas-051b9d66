@@ -47,13 +47,12 @@ command = chimera_spectate_next
 ```
 </Info>
 
-### chimera_spectate_previous
+### chimera_spectate_back
 
-Spectate the previous player in the list. Also called `chimera_spectate_back`.
+Spectate the previous player in the list.
 
 ```bash
-chimera_spectate_previous
-chimera_spectate_back  # Alternative name
+chimera_spectate_back
 ```
 
 <Info>
@@ -61,7 +60,7 @@ This command is designed for use with hotkeys. Add to `chimera.ini`:
 ```ini
 [hotkey.spec_prev]
 key = Q
-command = chimera_spectate_previous
+command = chimera_spectate_back
 ```
 </Info>
 
@@ -69,7 +68,7 @@ command = chimera_spectate_previous
 
 ### chimera_spectate_team_only
 
-Restrict `chimera_spectate_next` and `chimera_spectate_previous` to only cycle through teammates.
+Restrict `chimera_spectate_next` and `chimera_spectate_back` to only cycle through teammates.
 
 <ParamField path="enabled" type="boolean" required>
   true to spectate team members only, false to spectate all players
@@ -93,9 +92,9 @@ For the best spectating experience, configure hotkeys in `chimera.ini`:
 key = E
 command = chimera_spectate_next
 
-[hotkey.spectate_previous]
+[hotkey.spectate_back]
 key = Q
-command = chimera_spectate_previous
+command = chimera_spectate_back
 
 [hotkey.spectate_stop]
 key = F
@@ -104,7 +103,7 @@ command = chimera_spectate 0
 
 This setup allows you to:
 - Press `E` to spectate the next player
-- Press `Q` to spectate the previous player
+- Press `Q` to go back to the previous player
 - Press `F` to stop spectating
 
 ## Use Cases
